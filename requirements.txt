@@ -1,0 +1,11 @@
+# Virtual Pet Game Dependencies
+
+# Game engine
+pygame>=2.5.0
+
+# Image processing for GIF handling
+Pillow>=10.0.0
+
+# Development dependencies (optional)
+# black>=23.0.0          # Code formatter
+# flake8>=6.0.0          # Linter
