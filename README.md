@@ -1,21 +1,24 @@
 # Virtual Pet Game
 
-A simple virtual pet simulator featuring Agumon and Gabumon from the Digimon universe.
+A simple virtual pet simulator featuring Agumon and Gabumon from the Digimon universe with PNG-based animations and interactive greeting system.
 
 ## Features
 
 - **Dual Digimon**: Both Agumon and Gabumon walk around simultaneously
-- **Animated Sprites**: Support for both GIF animations and static PNG images
+- **PNG Frame Animation**: Modern frame-based animation system using 0.png and 1.png for walking
+- **Interactive Greeting System**: Digimon face each other and perform greeting animations (2.png ↔ 0.png) when they meet
+- **Randomized Gameplay**: Random starting positions and movement directions each game
 - **Custom Background**: Uses bg1.jpg as the background image
 - **Natural Movement**: Random direction changes for realistic pet behavior
-- **Collision Detection**: Digimon bounce off each other when they meet
+- **Smart Collision Detection**: Digimon greet each other, then walk away in different directions
 - **Retro Screen**: 480x320 pixel display for authentic virtual pet feel
+- **Analysis Tools**: Included comparison and analysis utilities
 
 ## Requirements
 
 - Python 3.7+
 - pygame
-- Pillow (PIL)
+- Pillow (PIL) - only needed for comparison tools
 
 ## Installation
 
@@ -37,8 +40,17 @@ python run.py
 python src/main.py
 ```
 
-### Option 3: Windows batch file
-Double-click `start_game.bat` on Windows systems
+### Analysis Tools
+```bash
+# Compare GIF vs PNG animations side by side
+python comparison_demo.py
+
+# Analyze differences between image files
+python analyze_images.py
+
+# Visual image comparison tool
+python image_comparison.py
+```
 
 ## Controls
 
