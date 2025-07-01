@@ -2,6 +2,7 @@ import pygame
 import sys
 import os
 import random
+import platform
 
 # Initialize Pygame
 pygame.init()
@@ -255,8 +256,19 @@ class VPetGame:
     def __init__(self):
         # Show the mouse cursor for desktop testing
         pygame.mouse.set_visible(True)
-        # Set up a windowed mode at 480x320 for testing
-        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        
+        # Check if running on Raspberry Pi
+        is_raspberry_pi = self.is_raspberry_pi()
+        
+        if is_raspberry_pi:
+            # Force fullscreen mode on Raspberry Pi
+            self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN | pygame.NOFRAME)
+            print("Running on Raspberry Pi - using fullscreen mode")
+        else:
+            # Set up a windowed mode for desktop testing
+            self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+            print("Running on desktop - using windowed mode")
+            
         pygame.display.set_caption("Virtual Pet - Agumon & Gabumon")
         self.clock = pygame.time.Clock()
         
@@ -335,6 +347,35 @@ class VPetGame:
                 self.gabumon.flipped = False
         
         self.running = True
+    
+    def is_raspberry_pi(self):
+        """
+        Detect if the code is running on a Raspberry Pi.
+        Returns True if running on Raspberry Pi, False otherwise.
+        """
+        try:
+            # Check if we're on Linux with ARM architecture
+            if platform.system() == 'Linux' and platform.machine().startswith('arm'):
+                return True
+            
+            # Additional check: look for Raspberry Pi specific files
+            if os.path.exists('/proc/device-tree/model'):
+                with open('/proc/device-tree/model', 'r') as f:
+                    model = f.read().lower()
+                    if 'raspberry pi' in model:
+                        return True
+            
+            # Check for Raspberry Pi in /proc/cpuinfo (fallback)
+            if os.path.exists('/proc/cpuinfo'):
+                with open('/proc/cpuinfo', 'r') as f:
+                    cpuinfo = f.read().lower()
+                    if 'raspberry pi' in cpuinfo or 'bcm' in cpuinfo:
+                        return True
+                        
+        except Exception as e:
+            print(f"Error detecting Raspberry Pi: {e}")
+            
+        return False
     
     def handle_events(self):
         for event in pygame.event.get():
