@@ -2,7 +2,6 @@ import pygame
 import sys
 import os
 import random
-from PIL import Image
 
 # Initialize Pygame
 pygame.init()
@@ -14,49 +13,54 @@ BACKGROUND_COLOR = (135, 206, 235)  # Sky blue
 DIGIMON_SPEED = 2
 
 class Digimon:
-    def __init__(self, sprite_path, speed=DIGIMON_SPEED):
+    def __init__(self, sprite_folder, speed=DIGIMON_SPEED):
         self.frames = []
         self.current_frame = 0
         self.frame_timer = 0
-        self.frame_delay = 5  # Change frame every 5 game ticks
+        self.frame_delay = 5  # Change frame every 5 game ticks (0.5 seconds at 10 FPS)
         self.speed = speed  # Individual speed for each Digimon
         
-        # Load the sprite (try GIF first, then static image)
+        # Greeting animation state
+        self.is_greeting = False
+        self.greeting_timer = 0
+        self.greeting_frame = 0
+        self.greeting_cycles = 0
+        self.greeting_frames = []  # Will store frames 2 and 0 for greeting
+        self.post_greeting_direction = None  # Store direction to change to after greeting
+        
+        # Load walking animation frames (0.png and 1.png) and greeting frames (2.png)
         try:
-            if sprite_path.lower().endswith('.gif'):
-                # Load animated GIF
-                pil_image = Image.open(sprite_path)
+            # Load frame 0 and frame 1 for walking animation
+            frame_0_path = os.path.join(sprite_folder, "0.png")
+            frame_1_path = os.path.join(sprite_folder, "1.png")
+            frame_2_path = os.path.join(sprite_folder, "2.png")
+            
+            if os.path.exists(frame_0_path) and os.path.exists(frame_1_path):
+                # Load walking frames
+                frame_0 = pygame.image.load(frame_0_path)
+                frame_1 = pygame.image.load(frame_1_path)
                 
-                # Extract all frames from the GIF
-                for frame_num in range(pil_image.n_frames):
-                    pil_image.seek(frame_num)
-                    frame = pil_image.copy().convert('RGBA')
-                    
-                    # Convert PIL image to pygame surface
-                    mode = frame.mode
-                    size = frame.size
-                    data = frame.tobytes()
-                    
-                    pygame_surface = pygame.image.fromstring(data, size, mode)
-                    
-                    # Scale the frame for the smaller screen
-                    if pygame_surface.get_width() > 60 or pygame_surface.get_height() > 60:
-                        pygame_surface = pygame.transform.scale(pygame_surface, (50, 50))
-                    
-                    self.frames.append(pygame_surface)
+                # Scale the frames for the smaller screen
+                if frame_0.get_width() > 60 or frame_0.get_height() > 60:
+                    frame_0 = pygame.transform.scale(frame_0, (50, 50))
+                if frame_1.get_width() > 60 or frame_1.get_height() > 60:
+                    frame_1 = pygame.transform.scale(frame_1, (50, 50))
                 
-                if not self.frames:
-                    raise Exception("No frames found in GIF")
-                    
+                self.frames = [frame_0, frame_1]
                 self.image = self.frames[0]
+                
+                # Load greeting frames (2 and 0)
+                if os.path.exists(frame_2_path):
+                    frame_2 = pygame.image.load(frame_2_path)
+                    if frame_2.get_width() > 60 or frame_2.get_height() > 60:
+                        frame_2 = pygame.transform.scale(frame_2, (50, 50))
+                    self.greeting_frames = [frame_2, frame_0]  # 2 -> 0 -> 2 -> 0
+                else:
+                    # Fallback: use walking frames for greeting
+                    self.greeting_frames = [frame_1, frame_0]
+                    
             else:
-                # Load static image
-                self.image = pygame.image.load(sprite_path)
-                # Scale the sprite for the smaller screen
-                sprite_rect = self.image.get_rect()
-                if sprite_rect.width > 60 or sprite_rect.height > 60:
-                    self.image = pygame.transform.scale(self.image, (50, 50))
-                self.frames = [self.image]
+                raise Exception(f"Walking frames not found: {frame_0_path} or {frame_1_path}")
                 
         except Exception as e:
             print(f"Could not load sprite: {e}")
@@ -64,6 +68,7 @@ class Digimon:
             self.image = pygame.Surface((40, 40))
             self.image.fill((255, 165, 0))  # Orange color
             self.frames = [self.image]
+            self.greeting_frames = [self.image]  # Same fallback for greeting
         
         self.rect = self.image.get_rect()
         self.rect.x = 0
@@ -71,17 +76,91 @@ class Digimon:
         self.direction = 1  # 1 for right, -1 for left
         self.flipped = False
         self.original_frames = self.frames.copy()  # Keep original frames for flipping
+        self.original_greeting_frames = self.greeting_frames.copy()  # Keep original greeting frames
         self.direction_timer = 0  # Timer for random direction changes
         self.next_direction_change = random.randint(60, 300)  # Random time between 1-5 seconds at 10fps
         
         # Ensure Digimon starts facing right by flipping if needed
         # Assume the original sprite faces left, so flip it to face right initially
         self.frames = [pygame.transform.flip(frame, True, False) for frame in self.frames]
+        self.greeting_frames = [pygame.transform.flip(frame, True, False) for frame in self.greeting_frames]
         self.image = self.frames[self.current_frame]
         self.flipped = True  # Mark as flipped since we're now facing right
     
+    def start_greeting(self, face_direction=None, post_greeting_direction=None):
+        """Start the greeting animation
+        Args:
+            face_direction: 1 for right, -1 for left (direction to face during greeting)
+            post_greeting_direction: 1 for right, -1 for left (direction to move after greeting)
+        """
+        self.is_greeting = True
+        self.greeting_timer = 0
+        self.greeting_frame = 0
+        self.greeting_cycles = 0
+        # Stop moving while greeting
+        self.speed_backup = self.speed
+        self.speed = 0
+        
+        # Store the direction to change to after greeting
+        self.post_greeting_direction = post_greeting_direction
+        
+        # Face the correct direction for greeting if specified
+        if face_direction is not None:
+            if face_direction == 1:  # Face right
+                if not self.flipped:
+                    self.frames = [pygame.transform.flip(frame, True, False) for frame in self.original_frames]
+                    self.greeting_frames = [pygame.transform.flip(frame, True, False) for frame in self.original_greeting_frames]
+                    self.flipped = True
+            else:  # Face left
+                if self.flipped:
+                    self.frames = self.original_frames.copy()
+                    self.greeting_frames = self.original_greeting_frames.copy()
+                    self.flipped = False
+        
+        # Immediately set to first greeting frame to avoid any walking animation
+        self.image = self.greeting_frames[self.greeting_frame]
+    
     def update(self):
-        # Update animation frame
+        # Handle greeting animation
+        if self.is_greeting:
+            self.greeting_timer += 1
+            if self.greeting_timer >= self.frame_delay:
+                self.greeting_timer = 0
+                self.greeting_frame = (self.greeting_frame + 1) % len(self.greeting_frames)
+                self.image = self.greeting_frames[self.greeting_frame]
+                
+                # Check if we completed a full cycle (2 -> 0)
+                if self.greeting_frame == 0 and self.greeting_timer == 0:
+                    self.greeting_cycles += 1
+                    
+                # After 2 cycles, stop greeting
+                if self.greeting_cycles >= 2:
+                    self.is_greeting = False
+                    self.speed = self.speed_backup  # Restore movement
+                    # Switch to walking animation
+                    self.current_frame = 0
+                    
+                    # Apply post-greeting direction change if specified
+                    if self.post_greeting_direction is not None:
+                        self.direction = self.post_greeting_direction
+                        self.post_greeting_direction = None  # Clear it
+                    
+                    # Update sprite direction to match movement direction after greeting
+                    if self.direction == 1:  # Moving right
+                        if not self.flipped:
+                            self.frames = [pygame.transform.flip(frame, True, False) for frame in self.original_frames]
+                            self.greeting_frames = [pygame.transform.flip(frame, True, False) for frame in self.original_greeting_frames]
+                            self.flipped = True
+                    else:  # Moving left
+                        if self.flipped:
+                            self.frames = self.original_frames.copy()
+                            self.greeting_frames = self.original_greeting_frames.copy()
+                            self.flipped = False
+                    
+                    self.image = self.frames[self.current_frame]
+            return  # Don't do normal updates while greeting
+        
+        # Update animation frame (normal walking)
         if len(self.frames) > 1:
             self.frame_timer += 1
             if self.frame_timer >= self.frame_delay:
@@ -102,11 +181,13 @@ class Digimon:
             if self.direction == 1:  # Moving right
                 if not self.flipped:
                     self.frames = [pygame.transform.flip(frame, True, False) for frame in self.original_frames]
+                    self.greeting_frames = [pygame.transform.flip(frame, True, False) for frame in self.original_greeting_frames]
                     self.image = self.frames[self.current_frame]
                     self.flipped = True
             else:  # Moving left
                 if self.flipped:
                     self.frames = self.original_frames.copy()
+                    self.greeting_frames = self.original_greeting_frames.copy()
                     self.image = self.frames[self.current_frame]
                     self.flipped = False
         
@@ -124,6 +205,7 @@ class Digimon:
             # Flip sprite to match new direction
             if self.flipped:
                 self.frames = self.original_frames.copy()
+                self.greeting_frames = self.original_greeting_frames.copy()
                 self.image = self.frames[self.current_frame]
                 self.flipped = False
                 
@@ -137,6 +219,7 @@ class Digimon:
             # Flip sprite to match new direction
             if not self.flipped:
                 self.frames = [pygame.transform.flip(frame, True, False) for frame in self.original_frames]
+                self.greeting_frames = [pygame.transform.flip(frame, True, False) for frame in self.original_greeting_frames]
                 self.image = self.frames[self.current_frame]
                 self.flipped = True
     
@@ -158,16 +241,21 @@ class Digimon:
         if self.direction == 1:  # Moving right
             if not self.flipped:
                 self.frames = [pygame.transform.flip(frame, True, False) for frame in self.original_frames]
+                self.greeting_frames = [pygame.transform.flip(frame, True, False) for frame in self.original_greeting_frames]
                 self.image = self.frames[self.current_frame]
                 self.flipped = True
         else:  # Moving left
             if self.flipped:
                 self.frames = self.original_frames.copy()
+                self.greeting_frames = self.original_greeting_frames.copy()
                 self.image = self.frames[self.current_frame]
                 self.flipped = False
 
 class VPetGame:
     def __init__(self):
+        # Show the mouse cursor for desktop testing
+        pygame.mouse.set_visible(True)
+        # Set up a windowed mode at 480x320 for testing
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Virtual Pet - Agumon & Gabumon")
         self.clock = pygame.time.Clock()
@@ -196,43 +284,55 @@ class VPetGame:
             self.background.fill(BACKGROUND_COLOR)
         
         # Create Agumon
-        agumon_gif_path = os.path.join(sprites_dir, "agumon-walking.gif")
-        agumon_png_path = os.path.join(sprites_dir, "The-REAL-Agumon-sprite.png")
-        
-        if os.path.exists(agumon_gif_path):
-            agumon_sprite_path = agumon_gif_path
-        elif os.path.exists(agumon_png_path):
-            agumon_sprite_path = agumon_png_path
-        else:
-            agumon_sprite_path = agumon_gif_path  # Will trigger fallback
-            print(f"Warning: Could not find Agumon sprites in {sprites_dir}")
-        
-        self.agumon = Digimon(agumon_sprite_path, speed=2)
+        agumon_folder = os.path.join(sprites_dir, "Agumon_dmc")
+        self.agumon = Digimon(agumon_folder, speed=2)
         
         # Create Gabumon
-        gabumon_gif_path = os.path.join(sprites_dir, "Gabumon-walking.gif")
-        gabumon_png_path = os.path.join(sprites_dir, "Gabumon_1.png")
+        gabumon_folder = os.path.join(sprites_dir, "Gabumon_dmc")
+        self.gabumon = Digimon(gabumon_folder, speed=2)  # Same speed as Agumon
         
-        if os.path.exists(gabumon_gif_path):
-            gabumon_sprite_path = gabumon_gif_path
-        elif os.path.exists(gabumon_png_path):
-            gabumon_sprite_path = gabumon_png_path
-        else:
-            gabumon_sprite_path = gabumon_gif_path  # Will trigger fallback
-            print(f"Warning: Could not find Gabumon sprites in {sprites_dir}")
+        # Randomize starting positions ensuring they don't start side by side
+        min_distance = 100  # Minimum distance between them
+        max_attempts = 10  # Prevent infinite loop
         
-        self.gabumon = Digimon(gabumon_sprite_path, speed=2)  # Same speed as Agumon
+        for attempt in range(max_attempts):
+            # Random positions within screen bounds (accounting for sprite size)
+            agumon_x = random.randint(0, SCREEN_WIDTH - 60)
+            gabumon_x = random.randint(0, SCREEN_WIDTH - 60)
+            
+            # Check if they're far enough apart
+            if abs(agumon_x - gabumon_x) >= min_distance:
+                break
+            
+            # If this is the last attempt, force them apart
+            if attempt == max_attempts - 1:
+                agumon_x = random.randint(0, SCREEN_WIDTH // 2 - 60)
+                gabumon_x = random.randint(SCREEN_WIDTH // 2 + min_distance, SCREEN_WIDTH - 60)
         
-        # Position them differently so they don't overlap
-        self.agumon.rect.x = 50  # Start Agumon a bit to the right
-        self.gabumon.rect.x = 200  # Start Gabumon further right
+        # Set the randomized positions
+        self.agumon.rect.x = agumon_x
+        self.gabumon.rect.x = gabumon_x
         
-        # Give them different initial directions for variety
-        self.gabumon.direction = -1  # Start Gabumon moving left
-        if self.gabumon.flipped:
-            self.gabumon.frames = self.gabumon.original_frames.copy()
-            self.gabumon.image = self.gabumon.frames[self.gabumon.current_frame]
-            self.gabumon.flipped = False
+        # Randomize initial directions
+        self.agumon.direction = random.choice([-1, 1])
+        self.gabumon.direction = random.choice([-1, 1])
+        
+        # Set proper sprite directions to match movement
+        # Agumon sprite direction
+        if self.agumon.direction == -1:  # Moving left
+            if self.agumon.flipped:
+                self.agumon.frames = self.agumon.original_frames.copy()
+                self.agumon.greeting_frames = self.agumon.original_greeting_frames.copy()
+                self.agumon.image = self.agumon.frames[self.agumon.current_frame]
+                self.agumon.flipped = False
+        
+        # Gabumon sprite direction  
+        if self.gabumon.direction == -1:  # Moving left
+            if self.gabumon.flipped:
+                self.gabumon.frames = self.gabumon.original_frames.copy()
+                self.gabumon.greeting_frames = self.gabumon.original_greeting_frames.copy()
+                self.gabumon.image = self.gabumon.frames[self.gabumon.current_frame]
+                self.gabumon.flipped = False
         
         self.running = True
     
@@ -253,15 +353,40 @@ class VPetGame:
         self.agumon.update()
         self.gabumon.update()
         
-        # Check for collision between the two Digimon
-        if self.agumon.check_collision(self.gabumon):
+        # Check for collision between the two Digimon (only if neither is greeting)
+        if (self.agumon.check_collision(self.gabumon) and 
+            not self.agumon.is_greeting and not self.gabumon.is_greeting):
+            
             # Move them back to prevent overlap
             self.agumon.rect.x = prev_agumon_x
             self.gabumon.rect.x = prev_gabumon_x
             
-            # Both change direction
-            self.agumon.handle_collision()
-            self.gabumon.handle_collision()
+            # Determine which direction each should face to look at each other
+            # and which direction they should move after greeting
+            if self.agumon.rect.centerx < self.gabumon.rect.centerx:
+                # Agumon is on the left, Gabumon on the right
+                agumon_face_direction = 1  # Agumon faces right
+                gabumon_face_direction = -1  # Gabumon faces left
+                # After greeting, they should move away from each other
+                agumon_post_direction = -1  # Agumon moves left (away)
+                gabumon_post_direction = 1  # Gabumon moves right (away)
+            else:
+                # Agumon is on the right, Gabumon on the left
+                agumon_face_direction = -1  # Agumon faces left
+                gabumon_face_direction = 1  # Gabumon faces right
+                # After greeting, they should move away from each other
+                agumon_post_direction = 1  # Agumon moves right (away)
+                gabumon_post_direction = -1  # Gabumon moves left (away)
+            
+            # Start greeting animation with proper facing directions and post-greeting directions
+            self.agumon.start_greeting(agumon_face_direction, agumon_post_direction)
+            self.gabumon.start_greeting(gabumon_face_direction, gabumon_post_direction)
+            
+            # Reset timers for more natural movement after greeting
+            self.agumon.direction_timer = 0
+            self.gabumon.direction_timer = 0
+            self.agumon.next_direction_change = random.randint(30, 120)
+            self.gabumon.next_direction_change = random.randint(30, 120)
             
             # Move them slightly apart to prevent getting stuck
             if self.agumon.rect.centerx < self.gabumon.rect.centerx:
