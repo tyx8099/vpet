@@ -364,13 +364,9 @@ class VPetGame:
         # Check if running on Raspberry Pi
         self.is_raspberry_pi_device = self.is_raspberry_pi()
         
-        # Hide mouse cursor on Raspberry Pi (touchscreen), show on desktop for development
-        if self.is_raspberry_pi_device:
-            #pygame.mouse.set_visible(False)  # Hide cursor on Pi (touchscreen)
-            print("Mouse cursor hidden for touchscreen use")
-        else:
-            pygame.mouse.set_visible(True)   # Show cursor on desktop for development
-            print("Mouse cursor visible for desktop development")
+        # Always show mouse cursor initially on all platforms
+        pygame.mouse.set_visible(True)
+        print("Mouse cursor visible - will auto-hide after 2 seconds of inactivity")
         
         if self.is_raspberry_pi_device:
             # Force fullscreen mode on Raspberry Pi
@@ -416,7 +412,7 @@ class VPetGame:
         # Auto-hide mouse cursor after inactivity
         self.last_mouse_move_time = pygame.time.get_ticks()
         self.mouse_hide_delay = 2000  # 2 seconds in milliseconds
-        self.cursor_visible = not self.is_raspberry_pi_device  # Hidden on Pi, visible on desktop initially
+        self.cursor_visible = True  # Always start with cursor visible on all platforms
         self.last_mouse_pos = pygame.mouse.get_pos()
         
         # Create Agumon
@@ -604,8 +600,8 @@ class VPetGame:
                 pygame.mouse.set_visible(True)
                 self.cursor_visible = True
         
-        # Auto-hide cursor after inactivity (except on Raspberry Pi where it's always hidden)
-        if not self.is_raspberry_pi_device and self.cursor_visible:
+        # Auto-hide cursor after inactivity on all platforms
+        if self.cursor_visible:
             if current_time - self.last_mouse_move_time > self.mouse_hide_delay:
                 pygame.mouse.set_visible(False)
                 self.cursor_visible = False
