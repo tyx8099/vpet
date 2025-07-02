@@ -366,7 +366,7 @@ class VPetGame:
         
         # Hide mouse cursor on Raspberry Pi (touchscreen), show on desktop for development
         if is_raspberry_pi:
-            pygame.mouse.set_visible(False)  # Hide cursor on Pi (touchscreen)
+            #pygame.mouse.set_visible(False)  # Hide cursor on Pi (touchscreen)
             print("Mouse cursor hidden for touchscreen use")
         else:
             pygame.mouse.set_visible(True)   # Show cursor on desktop for development
