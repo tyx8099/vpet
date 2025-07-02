@@ -355,7 +355,7 @@ class VPetGame:
             self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
             print("Running on desktop - using windowed mode")
             
-        pygame.display.set_caption("Virtual Pet - Agumon & Gabumon")
+        pygame.display.set_caption("Vpet")
         self.clock = pygame.time.Clock()
         
         # Set up asset paths - handle both direct execution and launcher
@@ -367,19 +367,10 @@ class VPetGame:
             assets_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "assets")
         
         sprites_dir = os.path.join(assets_dir, "sprites")
+        background_dir = os.path.join(assets_dir, "background")
         
-        # Load background image
-        bg_path = os.path.join(assets_dir, "bg1.jpg")
-        try:
-            self.background = pygame.image.load(bg_path)
-            # Scale background to fit screen
-            self.background = pygame.transform.scale(self.background, (SCREEN_WIDTH, SCREEN_HEIGHT))
-            print(f"Loaded background: {bg_path}")
-        except Exception as e:
-            print(f"Could not load background {bg_path}: {e}")
-            # Create fallback colored background
-            self.background = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
-            self.background.fill(BACKGROUND_COLOR)
+        # Load random background image
+        self.background = self.load_random_background(background_dir)
         
         # Create Agumon
         agumon_folder = os.path.join(sprites_dir, "Agumon_dmc")
@@ -462,6 +453,41 @@ class VPetGame:
             print(f"Error detecting Raspberry Pi: {e}")
             
         return False
+    
+    def load_random_background(self, background_dir):
+        """
+        Load a random background image from the background directory.
+        Returns a pygame Surface with the background.
+        """
+        try:
+            # Get list of background files
+            if os.path.exists(background_dir):
+                background_files = [f for f in os.listdir(background_dir) 
+                                  if f.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif'))]
+                
+                if background_files:
+                    # Randomly select a background
+                    selected_bg = random.choice(background_files)
+                    bg_path = os.path.join(background_dir, selected_bg)
+                    
+                    # Load and scale the background
+                    background = pygame.image.load(bg_path)
+                    background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
+                    print(f"Loaded random background: {selected_bg}")
+                    return background
+                else:
+                    print("No background images found in background directory")
+            else:
+                print(f"Background directory not found: {background_dir}")
+                
+        except Exception as e:
+            print(f"Error loading random background: {e}")
+        
+        # Fallback to solid color background
+        print("Using fallback colored background")
+        background = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+        background.fill(BACKGROUND_COLOR)
+        return background
     
     def handle_events(self):
         for event in pygame.event.get():
