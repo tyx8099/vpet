@@ -34,7 +34,13 @@ class Digimon:
         self.sleeping_timer = 0
         self.sleeping_frame = 0
         self.sleeping_frames = []  # Will store frames 11 and 12 for sleeping
-        self.sleep_duration = random.randint(300, 600)  # Sleep for 30-60 seconds at 10 FPS
+        
+        # Jumping animation state
+        self.is_jumping = False
+        self.jump_velocity = 0
+        self.ground_y = 0  # Will be set after rect is created
+        self.gravity = 1
+        self.jump_strength = -8  # Negative because pygame y-axis goes down
         
         # Load walking animation frames (0.png and 1.png), greeting frames (2.png), and sleeping frames (11.png and 12.png)
         try:
@@ -97,6 +103,7 @@ class Digimon:
         self.rect = self.image.get_rect()
         self.rect.x = 0
         self.rect.y = SCREEN_HEIGHT - 30 - self.rect.height  # Position on the invisible ground line
+        self.ground_y = self.rect.y  # Store ground position for jumping
         self.direction = 1  # 1 for right, -1 for left
         self.flipped = False
         self.original_frames = self.frames.copy()  # Keep original frames for flipping
@@ -184,6 +191,13 @@ class Digimon:
             
             self.image = self.frames[self.current_frame]
     
+    def jump(self):
+        """Make the Digimon jump (only if awake and not already jumping)"""
+        if not self.is_sleeping and not self.is_jumping and not self.is_greeting:
+            self.is_jumping = True
+            self.jump_velocity = self.jump_strength
+            print(f"Digimon jumped!")
+    
     def update(self):
         # Handle sleeping animation
         if self.is_sleeping:
@@ -194,11 +208,18 @@ class Digimon:
                 self.sleeping_frame = (self.sleeping_frame + 1) % len(self.sleeping_frames)
                 self.image = self.sleeping_frames[self.sleeping_frame]
             
-            # Check if sleep duration is over
-            if self.sleeping_timer >= self.sleep_duration:
-                self.wake_up()
-            
             return  # Don't do normal updates while sleeping
+        
+        # Handle jumping physics
+        if self.is_jumping:
+            self.jump_velocity += self.gravity
+            self.rect.y += self.jump_velocity
+            
+            # Check if landed back on ground
+            if self.rect.y >= self.ground_y:
+                self.rect.y = self.ground_y
+                self.is_jumping = False
+                self.jump_velocity = 0
         
         # Handle greeting animation
         if self.is_greeting:
@@ -340,11 +361,16 @@ class Digimon:
 
 class VPetGame:
     def __init__(self):
-        # Show the mouse cursor for desktop testing
-        pygame.mouse.set_visible(True)
-        
         # Check if running on Raspberry Pi
         is_raspberry_pi = self.is_raspberry_pi()
+        
+        # Hide mouse cursor on Raspberry Pi (touchscreen), show on desktop for development
+        if is_raspberry_pi:
+            pygame.mouse.set_visible(False)  # Hide cursor on Pi (touchscreen)
+            print("Mouse cursor hidden for touchscreen use")
+        else:
+            pygame.mouse.set_visible(True)   # Show cursor on desktop for development
+            print("Mouse cursor visible for desktop development")
         
         if is_raspberry_pi:
             # Force fullscreen mode on Raspberry Pi
@@ -367,10 +393,25 @@ class VPetGame:
             assets_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "assets")
         
         sprites_dir = os.path.join(assets_dir, "sprites")
-        background_dir = os.path.join(assets_dir, "background")
+        self.background_dir = os.path.join(assets_dir, "background")
         
-        # Load random background image
-        self.background = self.load_random_background(background_dir)
+        # Load all background images and set up cycling
+        self.background_files = []
+        self.current_background_index = 0
+        self.backgrounds = []
+        self.load_all_backgrounds()
+        
+        # Set initial background
+        if self.backgrounds:
+            self.background = self.backgrounds[0]
+        else:
+            # Fallback to solid color background
+            self.background = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+            self.background.fill(BACKGROUND_COLOR)
+        
+        # Double-tap detection for background changing
+        self.last_tap_time = 0
+        self.double_tap_delay = 500  # 500ms for double-tap detection
         
         # Create Agumon
         agumon_folder = os.path.join(sprites_dir, "Agumon_dmc")
@@ -454,6 +495,42 @@ class VPetGame:
             
         return False
     
+    def load_all_backgrounds(self):
+        """
+        Load all background images from the background directory.
+        """
+        try:
+            # Get list of background files
+            if os.path.exists(self.background_dir):
+                self.background_files = [f for f in os.listdir(self.background_dir) 
+                                      if f.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif'))]
+                
+                # Sort the files for consistent order
+                self.background_files.sort()
+                
+                if self.background_files:
+                    # Load all backgrounds
+                    for bg_file in self.background_files:
+                        bg_path = os.path.join(self.background_dir, bg_file)
+                        
+                        try:
+                            # Load and scale the background
+                            background = pygame.image.load(bg_path)
+                            background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
+                            self.backgrounds.append(background)
+                            print(f"Loaded background: {bg_file}")
+                        except Exception as e:
+                            print(f"Error loading background {bg_file}: {e}")
+                    
+                    print(f"Loaded {len(self.backgrounds)} backgrounds total")
+                else:
+                    print("No background images found in background directory")
+            else:
+                print(f"Background directory not found: {self.background_dir}")
+                
+        except Exception as e:
+            print(f"Error loading backgrounds: {e}")
+    
     def load_random_background(self, background_dir):
         """
         Load a random background image from the background directory.
@@ -489,6 +566,24 @@ class VPetGame:
         background.fill(BACKGROUND_COLOR)
         return background
     
+    def change_background(self):
+        """
+        Cycle to the next background image.
+        """
+        if self.backgrounds:
+            # Move to next background (cycle back to 0 if at end)
+            self.current_background_index = (self.current_background_index + 1) % len(self.backgrounds)
+            self.background = self.backgrounds[self.current_background_index]
+            
+            # Get the filename for display
+            if self.current_background_index < len(self.background_files):
+                current_bg_name = self.background_files[self.current_background_index]
+                print(f"Background changed to: {current_bg_name} ({self.current_background_index + 1}/{len(self.backgrounds)})")
+            else:
+                print(f"Background changed to: {self.current_background_index + 1}/{len(self.backgrounds)}")
+        else:
+            print("No backgrounds available to cycle through")
+    
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -499,13 +594,34 @@ class VPetGame:
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:  # Left mouse button
                     mouse_pos = pygame.mouse.get_pos()
-                    # Check if clicked on sleeping Digimon to wake them up
-                    if self.agumon.is_sleeping and self.agumon.rect.collidepoint(mouse_pos):
-                        self.agumon.wake_up()
-                        print("Clicked on Agumon - waking up!")
-                    if self.gabumon.is_sleeping and self.gabumon.rect.collidepoint(mouse_pos):
-                        self.gabumon.wake_up()
-                        print("Clicked on Gabumon - waking up!")
+                    current_time = pygame.time.get_ticks()
+                    
+                    # Check if tapped on upper half of screen for background change
+                    if mouse_pos[1] < SCREEN_HEIGHT // 2:  # Upper half of screen
+                        # Check for double-tap
+                        if current_time - self.last_tap_time < self.double_tap_delay:
+                            self.change_background()
+                            self.last_tap_time = 0  # Reset to prevent triple-tap
+                        else:
+                            self.last_tap_time = current_time
+                    else:
+                        # Lower half - check for Digimon interaction
+                        # Check if clicked on Agumon
+                        if self.agumon.rect.collidepoint(mouse_pos):
+                            if self.agumon.is_sleeping:
+                                self.agumon.wake_up()
+                                print("Clicked on Agumon - waking up!")
+                            else:
+                                self.agumon.jump()
+                                print("Clicked on Agumon - jumping!")
+                        # Check if clicked on Gabumon  
+                        elif self.gabumon.rect.collidepoint(mouse_pos):
+                            if self.gabumon.is_sleeping:
+                                self.gabumon.wake_up()
+                                print("Clicked on Gabumon - waking up!")
+                            else:
+                                self.gabumon.jump()
+                                print("Clicked on Gabumon - jumping!")
     
     def update(self):
         # Store previous positions
