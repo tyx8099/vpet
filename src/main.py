@@ -29,12 +29,21 @@ class Digimon:
         self.greeting_frames = []  # Will store frames 2 and 0 for greeting
         self.post_greeting_direction = None  # Store direction to change to after greeting
         
-        # Load walking animation frames (0.png and 1.png) and greeting frames (2.png)
+        # Sleeping animation state
+        self.is_sleeping = True  # Start sleeping
+        self.sleeping_timer = 0
+        self.sleeping_frame = 0
+        self.sleeping_frames = []  # Will store frames 11 and 12 for sleeping
+        self.sleep_duration = random.randint(300, 600)  # Sleep for 30-60 seconds at 10 FPS
+        
+        # Load walking animation frames (0.png and 1.png), greeting frames (2.png), and sleeping frames (11.png and 12.png)
         try:
             # Load frame 0 and frame 1 for walking animation
             frame_0_path = os.path.join(sprite_folder, "0.png")
             frame_1_path = os.path.join(sprite_folder, "1.png")
             frame_2_path = os.path.join(sprite_folder, "2.png")
+            frame_11_path = os.path.join(sprite_folder, "11.png")
+            frame_12_path = os.path.join(sprite_folder, "12.png")
             
             if os.path.exists(frame_0_path) and os.path.exists(frame_1_path):
                 # Load walking frames
@@ -59,6 +68,19 @@ class Digimon:
                 else:
                     # Fallback: use walking frames for greeting
                     self.greeting_frames = [frame_1, frame_0]
+                
+                # Load sleeping frames (11 and 12)
+                if os.path.exists(frame_11_path) and os.path.exists(frame_12_path):
+                    frame_11 = pygame.image.load(frame_11_path)
+                    frame_12 = pygame.image.load(frame_12_path)
+                    if frame_11.get_width() > 60 or frame_11.get_height() > 60:
+                        frame_11 = pygame.transform.scale(frame_11, (50, 50))
+                    if frame_12.get_width() > 60 or frame_12.get_height() > 60:
+                        frame_12 = pygame.transform.scale(frame_12, (50, 50))
+                    self.sleeping_frames = [frame_11, frame_12]  # 11 -> 12 -> 11 -> 12
+                else:
+                    # Fallback: use frame 0 for sleeping
+                    self.sleeping_frames = [frame_0]
                     
             else:
                 raise Exception(f"Walking frames not found: {frame_0_path} or {frame_1_path}")
@@ -70,6 +92,7 @@ class Digimon:
             self.image.fill((255, 165, 0))  # Orange color
             self.frames = [self.image]
             self.greeting_frames = [self.image]  # Same fallback for greeting
+            self.sleeping_frames = [self.image]  # Same fallback for sleeping
         
         self.rect = self.image.get_rect()
         self.rect.x = 0
@@ -78,15 +101,22 @@ class Digimon:
         self.flipped = False
         self.original_frames = self.frames.copy()  # Keep original frames for flipping
         self.original_greeting_frames = self.greeting_frames.copy()  # Keep original greeting frames
+        self.original_sleeping_frames = self.sleeping_frames.copy()  # Keep original sleeping frames
         self.direction_timer = 0  # Timer for random direction changes
         self.next_direction_change = random.randint(60, 300)  # Random time between 1-5 seconds at 10fps
         
-        # Ensure Digimon starts facing right by flipping if needed
+        # Start sleeping, so set image to first sleeping frame
+        if self.sleeping_frames:
+            self.image = self.sleeping_frames[0]
+        
+        # Ensure Digimon starts facing right by flipping if needed (but only when not sleeping)
         # Assume the original sprite faces left, so flip it to face right initially
-        self.frames = [pygame.transform.flip(frame, True, False) for frame in self.frames]
-        self.greeting_frames = [pygame.transform.flip(frame, True, False) for frame in self.greeting_frames]
-        self.image = self.frames[self.current_frame]
-        self.flipped = True  # Mark as flipped since we're now facing right
+        if not self.is_sleeping:
+            self.frames = [pygame.transform.flip(frame, True, False) for frame in self.frames]
+            self.greeting_frames = [pygame.transform.flip(frame, True, False) for frame in self.greeting_frames]
+            self.sleeping_frames = [pygame.transform.flip(frame, True, False) for frame in self.sleeping_frames]
+            self.image = self.frames[self.current_frame]
+            self.flipped = True  # Mark as flipped since we're now facing right
     
     def start_greeting(self, face_direction=None, post_greeting_direction=None):
         """Start the greeting animation
@@ -111,17 +141,65 @@ class Digimon:
                 if not self.flipped:
                     self.frames = [pygame.transform.flip(frame, True, False) for frame in self.original_frames]
                     self.greeting_frames = [pygame.transform.flip(frame, True, False) for frame in self.original_greeting_frames]
+                    self.sleeping_frames = [pygame.transform.flip(frame, True, False) for frame in self.original_sleeping_frames]
                     self.flipped = True
             else:  # Face left
                 if self.flipped:
                     self.frames = self.original_frames.copy()
                     self.greeting_frames = self.original_greeting_frames.copy()
+                    self.sleeping_frames = self.original_sleeping_frames.copy()
                     self.flipped = False
         
         # Immediately set to first greeting frame to avoid any walking animation
         self.image = self.greeting_frames[self.greeting_frame]
     
+    def wake_up(self):
+        """Wake up the Digimon from sleep"""
+        if self.is_sleeping:
+            self.is_sleeping = False
+            self.sleeping_timer = 0
+            self.sleeping_frame = 0
+            
+            # Switch back to walking animation
+            self.current_frame = 0
+            
+            # Randomize direction when waking up
+            self.direction = random.choice([-1, 1])
+            
+            # Set sprite orientation to match the direction
+            if self.direction == 1:  # Moving right
+                # Flip sprites to face right
+                self.frames = [pygame.transform.flip(frame, True, False) for frame in self.original_frames]
+                self.greeting_frames = [pygame.transform.flip(frame, True, False) for frame in self.original_greeting_frames]
+                self.sleeping_frames = [pygame.transform.flip(frame, True, False) for frame in self.original_sleeping_frames]
+                self.flipped = True
+                print(f"Digimon woke up and will walk right!")
+            else:  # Moving left
+                # Use original sprites (facing left)
+                self.frames = self.original_frames.copy()
+                self.greeting_frames = self.original_greeting_frames.copy()
+                self.sleeping_frames = self.original_sleeping_frames.copy()
+                self.flipped = False
+                print(f"Digimon woke up and will walk left!")
+            
+            self.image = self.frames[self.current_frame]
+    
     def update(self):
+        # Handle sleeping animation
+        if self.is_sleeping:
+            self.sleeping_timer += 1
+            
+            # Animate sleeping frames
+            if len(self.sleeping_frames) > 1 and self.sleeping_timer % self.frame_delay == 0:
+                self.sleeping_frame = (self.sleeping_frame + 1) % len(self.sleeping_frames)
+                self.image = self.sleeping_frames[self.sleeping_frame]
+            
+            # Check if sleep duration is over
+            if self.sleeping_timer >= self.sleep_duration:
+                self.wake_up()
+            
+            return  # Don't do normal updates while sleeping
+        
         # Handle greeting animation
         if self.is_greeting:
             self.greeting_timer += 1
@@ -151,11 +229,13 @@ class Digimon:
                         if not self.flipped:
                             self.frames = [pygame.transform.flip(frame, True, False) for frame in self.original_frames]
                             self.greeting_frames = [pygame.transform.flip(frame, True, False) for frame in self.original_greeting_frames]
+                            self.sleeping_frames = [pygame.transform.flip(frame, True, False) for frame in self.original_sleeping_frames]
                             self.flipped = True
                     else:  # Moving left
                         if self.flipped:
                             self.frames = self.original_frames.copy()
                             self.greeting_frames = self.original_greeting_frames.copy()
+                            self.sleeping_frames = self.original_sleeping_frames.copy()
                             self.flipped = False
                     
                     self.image = self.frames[self.current_frame]
@@ -183,12 +263,14 @@ class Digimon:
                 if not self.flipped:
                     self.frames = [pygame.transform.flip(frame, True, False) for frame in self.original_frames]
                     self.greeting_frames = [pygame.transform.flip(frame, True, False) for frame in self.original_greeting_frames]
+                    self.sleeping_frames = [pygame.transform.flip(frame, True, False) for frame in self.original_sleeping_frames]
                     self.image = self.frames[self.current_frame]
                     self.flipped = True
             else:  # Moving left
                 if self.flipped:
                     self.frames = self.original_frames.copy()
                     self.greeting_frames = self.original_greeting_frames.copy()
+                    self.sleeping_frames = self.original_sleeping_frames.copy()
                     self.image = self.frames[self.current_frame]
                     self.flipped = False
         
@@ -207,6 +289,7 @@ class Digimon:
             if self.flipped:
                 self.frames = self.original_frames.copy()
                 self.greeting_frames = self.original_greeting_frames.copy()
+                self.sleeping_frames = self.original_sleeping_frames.copy()
                 self.image = self.frames[self.current_frame]
                 self.flipped = False
                 
@@ -221,6 +304,7 @@ class Digimon:
             if not self.flipped:
                 self.frames = [pygame.transform.flip(frame, True, False) for frame in self.original_frames]
                 self.greeting_frames = [pygame.transform.flip(frame, True, False) for frame in self.original_greeting_frames]
+                self.sleeping_frames = [pygame.transform.flip(frame, True, False) for frame in self.original_sleeping_frames]
                 self.image = self.frames[self.current_frame]
                 self.flipped = True
     
@@ -243,12 +327,14 @@ class Digimon:
             if not self.flipped:
                 self.frames = [pygame.transform.flip(frame, True, False) for frame in self.original_frames]
                 self.greeting_frames = [pygame.transform.flip(frame, True, False) for frame in self.original_greeting_frames]
+                self.sleeping_frames = [pygame.transform.flip(frame, True, False) for frame in self.original_sleeping_frames]
                 self.image = self.frames[self.current_frame]
                 self.flipped = True
         else:  # Moving left
             if self.flipped:
                 self.frames = self.original_frames.copy()
                 self.greeting_frames = self.original_greeting_frames.copy()
+                self.sleeping_frames = self.original_sleeping_frames.copy()
                 self.image = self.frames[self.current_frame]
                 self.flipped = False
 
@@ -384,6 +470,16 @@ class VPetGame:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:  # Left mouse button
+                    mouse_pos = pygame.mouse.get_pos()
+                    # Check if clicked on sleeping Digimon to wake them up
+                    if self.agumon.is_sleeping and self.agumon.rect.collidepoint(mouse_pos):
+                        self.agumon.wake_up()
+                        print("Clicked on Agumon - waking up!")
+                    if self.gabumon.is_sleeping and self.gabumon.rect.collidepoint(mouse_pos):
+                        self.gabumon.wake_up()
+                        print("Clicked on Gabumon - waking up!")
     
     def update(self):
         # Store previous positions
@@ -394,9 +490,10 @@ class VPetGame:
         self.agumon.update()
         self.gabumon.update()
         
-        # Check for collision between the two Digimon (only if neither is greeting)
+        # Check for collision between the two Digimon (only if neither is greeting or sleeping)
         if (self.agumon.check_collision(self.gabumon) and 
-            not self.agumon.is_greeting and not self.gabumon.is_greeting):
+            not self.agumon.is_greeting and not self.gabumon.is_greeting and
+            not self.agumon.is_sleeping and not self.gabumon.is_sleeping):
             
             # Move them back to prevent overlap
             self.agumon.rect.x = prev_agumon_x
