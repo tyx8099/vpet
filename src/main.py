@@ -411,7 +411,7 @@ class VPetGame:
         
         # Auto-hide mouse cursor after inactivity
         self.last_mouse_move_time = pygame.time.get_ticks()
-        self.mouse_hide_delay = 2000  # 2 seconds in milliseconds
+        self.mouse_hide_delay = 1000  # 1s in milliseconds
         self.cursor_visible = True  # Always start with cursor visible on all platforms
         self.last_mouse_pos = pygame.mouse.get_pos()
         
