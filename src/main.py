@@ -362,17 +362,17 @@ class Digimon:
 class VPetGame:
     def __init__(self):
         # Check if running on Raspberry Pi
-        is_raspberry_pi = self.is_raspberry_pi()
+        self.is_raspberry_pi_device = self.is_raspberry_pi()
         
         # Hide mouse cursor on Raspberry Pi (touchscreen), show on desktop for development
-        if is_raspberry_pi:
+        if self.is_raspberry_pi_device:
             #pygame.mouse.set_visible(False)  # Hide cursor on Pi (touchscreen)
             print("Mouse cursor hidden for touchscreen use")
         else:
             pygame.mouse.set_visible(True)   # Show cursor on desktop for development
             print("Mouse cursor visible for desktop development")
         
-        if is_raspberry_pi:
+        if self.is_raspberry_pi_device:
             # Force fullscreen mode on Raspberry Pi
             self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN | pygame.NOFRAME)
             print("Running on Raspberry Pi - using fullscreen mode")
@@ -412,6 +412,12 @@ class VPetGame:
         # Double-tap detection for background changing
         self.last_tap_time = 0
         self.double_tap_delay = 500  # 500ms for double-tap detection
+        
+        # Auto-hide mouse cursor after inactivity
+        self.last_mouse_move_time = pygame.time.get_ticks()
+        self.mouse_hide_delay = 2000  # 2 seconds in milliseconds
+        self.cursor_visible = not self.is_raspberry_pi_device  # Hidden on Pi, visible on desktop initially
+        self.last_mouse_pos = pygame.mouse.get_pos()
         
         # Create Agumon
         agumon_folder = os.path.join(sprites_dir, "Agumon_dmc")
@@ -585,6 +591,25 @@ class VPetGame:
             print("No backgrounds available to cycle through")
     
     def handle_events(self):
+        current_time = pygame.time.get_ticks()
+        current_mouse_pos = pygame.mouse.get_pos()
+        
+        # Check for mouse movement to show/hide cursor
+        if current_mouse_pos != self.last_mouse_pos:
+            self.last_mouse_pos = current_mouse_pos
+            self.last_mouse_move_time = current_time
+            
+            # Show cursor when mouse moves
+            if not self.cursor_visible:
+                pygame.mouse.set_visible(True)
+                self.cursor_visible = True
+        
+        # Auto-hide cursor after inactivity (except on Raspberry Pi where it's always hidden)
+        if not self.is_raspberry_pi_device and self.cursor_visible:
+            if current_time - self.last_mouse_move_time > self.mouse_hide_delay:
+                pygame.mouse.set_visible(False)
+                self.cursor_visible = False
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
