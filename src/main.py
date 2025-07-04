@@ -3,6 +3,8 @@ import sys
 import os
 import random
 import platform
+import time
+import math
 
 # Initialize Pygame
 pygame.init()
@@ -12,6 +14,10 @@ SCREEN_WIDTH = 480
 SCREEN_HEIGHT = 320
 BACKGROUND_COLOR = (135, 206, 235)  # Sky blue
 DIGIMON_SPEED = 2
+
+# Heart emotion constants
+HEART_DISPLAY_DURATION = 1000  # 1 second in milliseconds
+HEART_FLOAT_SPEED = 1  # Pixels per frame heart floats upward
 
 class Digimon:
     def __init__(self, sprite_folder, speed=DIGIMON_SPEED):
@@ -41,6 +47,29 @@ class Digimon:
         self.ground_y = 0  # Will be set after rect is created
         self.gravity = 1
         self.jump_strength = -8  # Negative because pygame y-axis goes down
+        
+        # Heart emotion state
+        self.heart_visible = False
+        self.heart_start_time = 0
+        self.heart_float_offset = 0
+        self.heart_image = None
+        
+        # Load heart emotion from emotion folder
+        emotion_dir = os.path.join(os.path.dirname(sprite_folder), "emotion")
+        heart_path = os.path.join(emotion_dir, "heart.png")
+        
+        try:
+            if os.path.exists(heart_path):
+                self.heart_image = pygame.image.load(heart_path)
+                # Scale heart to appropriate size (smaller than Digimon)
+                if self.heart_image.get_width() > 30 or self.heart_image.get_height() > 30:
+                    self.heart_image = pygame.transform.scale(self.heart_image, (25, 25))
+                print(f"Loaded heart emotion: {heart_path}")
+            else:
+                print(f"Heart emotion not found: {heart_path}")
+        except Exception as e:
+            print(f"Could not load heart emotion: {e}")
+            self.heart_image = None
         
         # Load walking animation frames (0.png and 1.png), greeting frames (2.png), and sleeping frames (11.png and 12.png)
         try:
@@ -190,15 +219,38 @@ class Digimon:
                 print(f"Digimon woke up and will walk left!")
             
             self.image = self.frames[self.current_frame]
+            self.show_heart()  # Show heart when waking up
     
     def jump(self):
         """Make the Digimon jump (only if awake and not already jumping)"""
         if not self.is_sleeping and not self.is_jumping and not self.is_greeting:
             self.is_jumping = True
             self.jump_velocity = self.jump_strength
+            self.show_heart()  # Show heart when jumping
             print(f"Digimon jumped!")
     
+    def show_heart(self):
+        """Show heart emotion above Digimon's head"""
+        if self.heart_image:
+            self.heart_visible = True
+            self.heart_start_time = pygame.time.get_ticks()
+            self.heart_float_offset = 0
+            print("💖 Digimon shows love!")
+    
     def update(self):
+        # Update heart emotion animation
+        if self.heart_visible:
+            current_time = pygame.time.get_ticks()
+            elapsed_time = current_time - self.heart_start_time
+            
+            if elapsed_time >= HEART_DISPLAY_DURATION:
+                # Heart animation finished
+                self.heart_visible = False
+                self.heart_float_offset = 0
+            else:
+                # Update heart floating animation
+                self.heart_float_offset += HEART_FLOAT_SPEED
+        
         # Handle sleeping animation
         if self.is_sleeping:
             self.sleeping_timer += 1
@@ -331,6 +383,27 @@ class Digimon:
     
     def draw(self, screen):
         screen.blit(self.image, self.rect)
+        
+        # Draw heart emotion if active
+        if self.heart_visible and self.heart_image:
+            # Position heart 10 pixels above Digimon's head
+            heart_x = self.rect.centerx - self.heart_image.get_width() // 2
+            heart_y = self.rect.top - 20 - self.heart_float_offset
+            
+            # Add gentle swaying animation
+            sway_offset = int(2 * math.sin(pygame.time.get_ticks() * 0.005))
+            heart_x += sway_offset
+            
+            # Draw heart with slight transparency fade effect
+            elapsed_time = pygame.time.get_ticks() - self.heart_start_time
+            if elapsed_time > HEART_DISPLAY_DURATION * 0.7:  # Start fading in last 30% of duration
+                fade_progress = (elapsed_time - HEART_DISPLAY_DURATION * 0.7) / (HEART_DISPLAY_DURATION * 0.3)
+                alpha = int(255 * (1 - fade_progress))
+                heart_surface = self.heart_image.copy()
+                heart_surface.set_alpha(alpha)
+                screen.blit(heart_surface, (heart_x, heart_y))
+            else:
+                screen.blit(self.heart_image, (heart_x, heart_y))
     
     def check_collision(self, other_digimon):
         """Check if this Digimon collides with another Digimon"""
@@ -415,13 +488,31 @@ class VPetGame:
         self.cursor_visible = True  # Always start with cursor visible on all platforms
         self.last_mouse_pos = pygame.mouse.get_pos()
         
-        # Create Agumon
-        agumon_folder = os.path.join(sprites_dir, "Agumon_dmc")
-        self.agumon = Digimon(agumon_folder, speed=2)
+        # Get list of available Digimon
+        available_digimon = []
+        if os.path.exists(sprites_dir):
+            for folder in os.listdir(sprites_dir):
+                if folder.endswith("_dmc") and os.path.isdir(os.path.join(sprites_dir, folder)):
+                    available_digimon.append(folder)
         
-        # Create Gabumon
-        gabumon_folder = os.path.join(sprites_dir, "Gabumon_dmc")
-        self.gabumon = Digimon(gabumon_folder, speed=2)  # Same speed as Agumon
+        if len(available_digimon) < 2:
+            # Fallback to original if not enough Digimon found
+            available_digimon = ["Agumon_dmc", "Gabumon_dmc"]
+        
+        # Randomly select 2 different Digimon
+        selected_digimon = random.sample(available_digimon, 2)
+        
+        # Create first Digimon
+        digimon1_folder = os.path.join(sprites_dir, selected_digimon[0])
+        self.digimon1 = Digimon(digimon1_folder, speed=2)
+        self.digimon1_name = selected_digimon[0].replace("_dmc", "")
+        
+        # Create second Digimon
+        digimon2_folder = os.path.join(sprites_dir, selected_digimon[1])
+        self.digimon2 = Digimon(digimon2_folder, speed=2)
+        self.digimon2_name = selected_digimon[1].replace("_dmc", "")
+        
+        print(f"Game started with {self.digimon1_name} and {self.digimon2_name}!")
         
         # Randomize starting positions ensuring they don't start side by side
         min_distance = 100  # Minimum distance between them
@@ -429,42 +520,42 @@ class VPetGame:
         
         for attempt in range(max_attempts):
             # Random positions within screen bounds (accounting for sprite size)
-            agumon_x = random.randint(0, SCREEN_WIDTH - 60)
-            gabumon_x = random.randint(0, SCREEN_WIDTH - 60)
+            digimon1_x = random.randint(0, SCREEN_WIDTH - 60)
+            digimon2_x = random.randint(0, SCREEN_WIDTH - 60)
             
             # Check if they're far enough apart
-            if abs(agumon_x - gabumon_x) >= min_distance:
+            if abs(digimon1_x - digimon2_x) >= min_distance:
                 break
             
             # If this is the last attempt, force them apart
             if attempt == max_attempts - 1:
-                agumon_x = random.randint(0, SCREEN_WIDTH // 2 - 60)
-                gabumon_x = random.randint(SCREEN_WIDTH // 2 + min_distance, SCREEN_WIDTH - 60)
+                digimon1_x = random.randint(0, SCREEN_WIDTH // 2 - 60)
+                digimon2_x = random.randint(SCREEN_WIDTH // 2 + min_distance, SCREEN_WIDTH - 60)
         
         # Set the randomized positions
-        self.agumon.rect.x = agumon_x
-        self.gabumon.rect.x = gabumon_x
+        self.digimon1.rect.x = digimon1_x
+        self.digimon2.rect.x = digimon2_x
         
         # Randomize initial directions
-        self.agumon.direction = random.choice([-1, 1])
-        self.gabumon.direction = random.choice([-1, 1])
+        self.digimon1.direction = random.choice([-1, 1])
+        self.digimon2.direction = random.choice([-1, 1])
         
         # Set proper sprite directions to match movement
-        # Agumon sprite direction
-        if self.agumon.direction == -1:  # Moving left
-            if self.agumon.flipped:
-                self.agumon.frames = self.agumon.original_frames.copy()
-                self.agumon.greeting_frames = self.agumon.original_greeting_frames.copy()
-                self.agumon.image = self.agumon.frames[self.agumon.current_frame]
-                self.agumon.flipped = False
+        # Digimon1 sprite direction
+        if self.digimon1.direction == -1:  # Moving left
+            if self.digimon1.flipped:
+                self.digimon1.frames = self.digimon1.original_frames.copy()
+                self.digimon1.greeting_frames = self.digimon1.original_greeting_frames.copy()
+                self.digimon1.image = self.digimon1.frames[self.digimon1.current_frame]
+                self.digimon1.flipped = False
         
-        # Gabumon sprite direction  
-        if self.gabumon.direction == -1:  # Moving left
-            if self.gabumon.flipped:
-                self.gabumon.frames = self.gabumon.original_frames.copy()
-                self.gabumon.greeting_frames = self.gabumon.original_greeting_frames.copy()
-                self.gabumon.image = self.gabumon.frames[self.gabumon.current_frame]
-                self.gabumon.flipped = False
+        # Digimon2 sprite direction  
+        if self.digimon2.direction == -1:  # Moving left
+            if self.digimon2.flipped:
+                self.digimon2.frames = self.digimon2.original_frames.copy()
+                self.digimon2.greeting_frames = self.digimon2.original_greeting_frames.copy()
+                self.digimon2.image = self.digimon2.frames[self.digimon2.current_frame]
+                self.digimon2.flipped = False
         
         self.running = True
     
@@ -627,81 +718,81 @@ class VPetGame:
                             self.last_tap_time = current_time
                     else:
                         # Lower half - check for Digimon interaction
-                        # Check if clicked on Agumon
-                        if self.agumon.rect.collidepoint(mouse_pos):
-                            if self.agumon.is_sleeping:
-                                self.agumon.wake_up()
-                                print("Clicked on Agumon - waking up!")
+                        # Check if clicked on first Digimon
+                        if self.digimon1.rect.collidepoint(mouse_pos):
+                            if self.digimon1.is_sleeping:
+                                self.digimon1.wake_up()
+                                print(f"Clicked on {self.digimon1_name} - waking up!")
                             else:
-                                self.agumon.jump()
-                                print("Clicked on Agumon - jumping!")
-                        # Check if clicked on Gabumon  
-                        elif self.gabumon.rect.collidepoint(mouse_pos):
-                            if self.gabumon.is_sleeping:
-                                self.gabumon.wake_up()
-                                print("Clicked on Gabumon - waking up!")
+                                self.digimon1.jump()
+                                print(f"Clicked on {self.digimon1_name} - jumping!")
+                        # Check if clicked on second Digimon  
+                        elif self.digimon2.rect.collidepoint(mouse_pos):
+                            if self.digimon2.is_sleeping:
+                                self.digimon2.wake_up()
+                                print(f"Clicked on {self.digimon2_name} - waking up!")
                             else:
-                                self.gabumon.jump()
-                                print("Clicked on Gabumon - jumping!")
+                                self.digimon2.jump()
+                                print(f"Clicked on {self.digimon2_name} - jumping!")
     
     def update(self):
         # Store previous positions
-        prev_agumon_x = self.agumon.rect.x
-        prev_gabumon_x = self.gabumon.rect.x
+        prev_digimon1_x = self.digimon1.rect.x
+        prev_digimon2_x = self.digimon2.rect.x
         
         # Update both Digimon
-        self.agumon.update()
-        self.gabumon.update()
+        self.digimon1.update()
+        self.digimon2.update()
         
         # Check for collision between the two Digimon (only if neither is greeting or sleeping)
-        if (self.agumon.check_collision(self.gabumon) and 
-            not self.agumon.is_greeting and not self.gabumon.is_greeting and
-            not self.agumon.is_sleeping and not self.gabumon.is_sleeping):
+        if (self.digimon1.check_collision(self.digimon2) and 
+            not self.digimon1.is_greeting and not self.digimon2.is_greeting and
+            not self.digimon1.is_sleeping and not self.digimon2.is_sleeping):
             
             # Move them back to prevent overlap
-            self.agumon.rect.x = prev_agumon_x
-            self.gabumon.rect.x = prev_gabumon_x
+            self.digimon1.rect.x = prev_digimon1_x
+            self.digimon2.rect.x = prev_digimon2_x
             
             # Determine which direction each should face to look at each other
             # and which direction they should move after greeting
-            if self.agumon.rect.centerx < self.gabumon.rect.centerx:
-                # Agumon is on the left, Gabumon on the right
-                agumon_face_direction = 1  # Agumon faces right
-                gabumon_face_direction = -1  # Gabumon faces left
+            if self.digimon1.rect.centerx < self.digimon2.rect.centerx:
+                # Digimon1 is on the left, Digimon2 on the right
+                digimon1_face_direction = 1  # Digimon1 faces right
+                digimon2_face_direction = -1  # Digimon2 faces left
                 # After greeting, they should move away from each other
-                agumon_post_direction = -1  # Agumon moves left (away)
-                gabumon_post_direction = 1  # Gabumon moves right (away)
+                digimon1_post_direction = -1  # Digimon1 moves left (away)
+                digimon2_post_direction = 1  # Digimon2 moves right (away)
             else:
-                # Agumon is on the right, Gabumon on the left
-                agumon_face_direction = -1  # Agumon faces left
-                gabumon_face_direction = 1  # Gabumon faces right
+                # Digimon1 is on the right, Digimon2 on the left
+                digimon1_face_direction = -1  # Digimon1 faces left
+                digimon2_face_direction = 1  # Digimon2 faces right
                 # After greeting, they should move away from each other
-                agumon_post_direction = 1  # Agumon moves right (away)
-                gabumon_post_direction = -1  # Gabumon moves left (away)
+                digimon1_post_direction = 1  # Digimon1 moves right (away)
+                digimon2_post_direction = -1  # Digimon2 moves left (away)
             
             # Start greeting animation with proper facing directions and post-greeting directions
-            self.agumon.start_greeting(agumon_face_direction, agumon_post_direction)
-            self.gabumon.start_greeting(gabumon_face_direction, gabumon_post_direction)
+            self.digimon1.start_greeting(digimon1_face_direction, digimon1_post_direction)
+            self.digimon2.start_greeting(digimon2_face_direction, digimon2_post_direction)
             
             # Reset timers for more natural movement after greeting
-            self.agumon.direction_timer = 0
-            self.gabumon.direction_timer = 0
-            self.agumon.next_direction_change = random.randint(30, 120)
-            self.gabumon.next_direction_change = random.randint(30, 120)
+            self.digimon1.direction_timer = 0
+            self.digimon2.direction_timer = 0
+            self.digimon1.next_direction_change = random.randint(30, 120)
+            self.digimon2.next_direction_change = random.randint(30, 120)
             
             # Move them slightly apart to prevent getting stuck
-            if self.agumon.rect.centerx < self.gabumon.rect.centerx:
-                self.agumon.rect.x -= 5
-                self.gabumon.rect.x += 5
+            if self.digimon1.rect.centerx < self.digimon2.rect.centerx:
+                self.digimon1.rect.x -= 5
+                self.digimon2.rect.x += 5
             else:
-                self.agumon.rect.x += 5
-                self.gabumon.rect.x -= 5
+                self.digimon1.rect.x += 5
+                self.digimon2.rect.x -= 5
     
     def draw(self):
         # Draw background image instead of solid color
         self.screen.blit(self.background, (0, 0))
-        self.agumon.draw(self.screen)
-        self.gabumon.draw(self.screen)
+        self.digimon1.draw(self.screen)
+        self.digimon2.draw(self.screen)
         
         # Ground line exists but is invisible (no drawing)
         # pygame.draw.line(self.screen, (34, 139, 34), 
