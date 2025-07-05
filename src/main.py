@@ -35,6 +35,34 @@ SELECTION_GRID_ROWS = 2  # 2 rows
 SELECTION_CELL_SIZE = 110  # Fits: (480-40 margins - 30 spacing)/3 = 136, use 110 for safety
 SELECTION_MARGIN = 10  # Spacing between cells
 
+def ensure_initial_selection(selection_file, sprites_dir):
+    """Ensure digimon_selection.json exists, create with random Digimon if missing"""
+    if os.path.exists(selection_file):
+        return
+    available_digimon = []
+    if os.path.exists(sprites_dir):
+        for folder in os.listdir(sprites_dir):
+            folder_path = os.path.join(sprites_dir, folder)
+            if folder.endswith("_dmc") and os.path.isdir(folder_path):
+                frame_0 = os.path.join(folder_path, "0.png")
+                frame_1 = os.path.join(folder_path, "1.png")
+                if os.path.exists(frame_0) and os.path.exists(frame_1):
+                    available_digimon.append(folder)
+    if len(available_digimon) >= 2:
+        selected = random.sample(available_digimon, 2)
+    else:
+        selected = ["Agumon_dmc", "Gabumon_dmc"]
+    selection_data = {
+        "selected_digimon": selected,
+        "timestamp": 0
+    }
+    try:
+        with open(selection_file, 'w') as f:
+            json.dump(selection_data, f, indent=2)
+        print(f"Created {selection_file} with: {[name.replace('_dmc', '') for name in selected]}")
+    except Exception as e:
+        print(f"Error creating {selection_file}: {e}")
+
 class DigimonSelectionUI:
     def __init__(self, screen, available_digimon, sprites_dir):
         self.screen = screen
@@ -412,9 +440,10 @@ class Digimon:
         self.hunger_timer = 0
         self.last_fed_time = 0
         
-        # Load heart emotion from emotion folder
-        emotion_dir = os.path.join(os.path.dirname(sprite_folder), "emotion")
-        heart_path = os.path.join(emotion_dir, "heart.png")
+        # Load heart emotion from others folder
+        assets_dir = os.path.dirname(os.path.dirname(sprite_folder))  # Go up two levels from sprite folder
+        others_dir = os.path.join(assets_dir, "others")
+        heart_path = os.path.join(others_dir, "heart.png")
         
         try:
             if os.path.exists(heart_path):
@@ -1103,11 +1132,9 @@ class VPetGame:
         self.selection_file = os.path.join(os.path.dirname(__file__), "..", "digimon_selection.json")
         self.sprites_dir = sprites_dir
         self.available_digimon = self.get_available_digimon(sprites_dir)
-        
-        print(f"Found {len(self.available_digimon)} available Digimon")
-        if not self.available_digimon:
-            print("Warning: No Digimon sprites found!")
-        
+        # Ensure selection file exists before loading
+        ensure_initial_selection(self.selection_file, self.sprites_dir)
+        # ...existing code...
         # Initialize selection UI
         self.selection_ui = DigimonSelectionUI(self.screen, self.available_digimon, sprites_dir)
         
@@ -1671,7 +1698,6 @@ class VPetGame:
             food.draw(self.screen)
         
         # Draw selection UI on top if active
-       
         self.selection_ui.draw()
         
         # Ground line exists but is invisible (no drawing)

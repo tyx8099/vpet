@@ -33,6 +33,8 @@ The game includes 20+ Digimon types:
 ## 🎵 Controls
 
 - **Left Click on Pet**: Wake up (if sleeping) or Jump (if awake)
+- **Right Click & Drag Food**: Feed your Digimon (drag food items to pets)
+- **Swipe Right**: Open Digimon selection UI (click and drag left to right)
 - **Double-tap Upper Screen**: Change background
 - **ESC**: Exit game
 
@@ -43,12 +45,19 @@ The game includes 20+ Digimon types:
 - **Walking**: Random movement with direction changes
 - **Jumping**: Half-height jumps when tapped
 - **Greeting**: Face each other and animate when colliding
+- **Feeding**: Drag food items to pets to increase their hunger levels
 
 ### Visual Effects
 - **Heart Emotions**: 💖 Appear 10 pixels above pet's head for 1 second
 - **Sprite Animations**: Smooth PNG frame cycling
 - **Background Rotation**: Multiple scenic backgrounds
 - **Auto-hiding Cursor**: Disappears after 2 seconds of inactivity
+
+### Digimon Selection
+- **Swipe Right**: Opens a selection UI with all available Digimon
+- **Grid Layout**: Browse through Digimon in an organized grid
+- **Live Preview**: Each Digimon shows their walking animation
+- **Max 2 Selection**: Choose up to 2 Digimon for the main game
 
 ## 📁 Project Structure
 
@@ -58,13 +67,16 @@ vpet/
 │   └── main.py          # Main game engine
 ├── assets/
 │   ├── sprites/         # Digimon sprite folders
-│   │   ├── emotion/     # Heart and other emotions
 │   │   ├── Agumon_dmc/  # Individual Digimon sprites
 │   │   └── ...
+│   ├── others/          # Heart emotion and other assets
+│   ├── food/            # Food items
 │   └── background/      # Background images
 ├── run.py              # Game launcher
 ├── requirements.txt    # Python dependencies
-└── README.md          # This file
+├── README.md          # This file
+├── DIGIMON_SELECTION.md # Digimon selection UI documentation
+└── RASPBERRY_PI_FIXES.md # Raspberry Pi compatibility guide
 ```
 
 ## 🚀 Deployment
@@ -93,6 +105,11 @@ python run.py
 2. Supported formats: PNG, JPG, JPEG, BMP
 3. Will be automatically loaded and cycled
 
+## 📚 Documentation
+
+- **[DIGIMON_SELECTION.md](DIGIMON_SELECTION.md)** - Complete guide to the Digimon selection UI
+- **[RASPBERRY_PI_FIXES.md](RASPBERRY_PI_FIXES.md)** - Raspberry Pi compatibility and troubleshooting
+
 ## 📊 System Requirements
 
 - **Python 3.6+**
@@ -113,76 +130,7 @@ Built with love for Digimon fans and virtual pet enthusiasts!
 
 ---
 *Enjoy your virtual pet adventure!* 🎮✨
-- Pillow (PIL) - only needed for comparison tools
 
-## Installation
-
-1. Clone or download this repository
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-## Usage
-
-### Option 1: Using the launcher (recommended)
-```bash
-python run.py
-```
-
-### Option 2: Direct execution
-```bash
-python src/main.py
-```
-
-### Analysis Tools
-```bash
-# Compare GIF vs PNG animations side by side
-python comparison_demo.py
-
-# Analyze differences between image files
-python analyze_images.py
-
-# Visual image comparison tool
-python image_comparison.py
-```
-
-## Controls
-
-- **ESC** - Exit game
-- **Close Window** - Exit game
-
-## Project Structure
-
-```
-vpet/
-├── src/                    # Source code
-│   └── main.py            # Main game file (can run directly)
-├── assets/                # Game assets
-│   ├── sprites/           # Digimon sprite files
-│   └── bg1.jpg           # Background image
-├── docs/                  # Documentation
-├── scripts/               # Utility scripts
-├── run.py                 # Launcher script (recommended)
-├── start_game.bat         # Windows batch launcher
-├── requirements.txt       # Python dependencies
-└── README.md             # This file
-```
-
-## Sprite Files
-
-The game looks for these sprite files in `assets/sprites/`:
-
-- **Agumon**: `agumon-walking.gif` or `The-REAL-Agumon-sprite.png`
-- **Gabumon**: `Gabumon-walking.gif` or `Gabumon_1.png`
-
-## Technical Details
-
-- **Screen Resolution**: 480x320 pixels
-- **Frame Rate**: 10 FPS
-- **Sprite Scaling**: Auto-scaled to 50x50 pixels max
-- **Animation**: Supports multi-frame GIF animations
-
-## License
+## 📄 License
 
 This project is for educational purposes. Digimon characters are property of their respective owners.
