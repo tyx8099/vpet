@@ -1104,13 +1104,25 @@ class VPetGame:
         self.sprites_dir = sprites_dir
         self.available_digimon = self.get_available_digimon(sprites_dir)
         
+        print(f"Found {len(self.available_digimon)} available Digimon")
+        if not self.available_digimon:
+            print("Warning: No Digimon sprites found!")
+        
         # Initialize selection UI
         self.selection_ui = DigimonSelectionUI(self.screen, self.available_digimon, sprites_dir)
         
-        # Initialize Digimon with saved or random selection
-        self.initialize_digimon()
-        
-        print(f"Game started with {self.digimon1_name} and {self.digimon2_name}!")
+        # Initialize Digimon with saved or random selection (with error handling)
+        try:
+            self.initialize_digimon()
+            print(f"Game started with {self.digimon1_name} and {self.digimon2_name}!")
+        except Exception as e:
+            print(f"Error initializing Digimon: {e}")
+            # Create fallback values
+            self.digimon1 = None
+            self.digimon2 = None
+            self.digimon1_name = "Default1"
+            self.digimon2_name = "Default2"
+            print("Using fallback Digimon names")
         
         # Load sushi food image  
         food_dir = os.path.join(os.path.dirname(__file__), "..", "assets", "food")
@@ -1166,7 +1178,14 @@ class VPetGame:
                             valid_selection.append(digimon)
                     
                     if len(valid_selection) == 2:
+                        print(f"Loaded selection: {[name.replace('_dmc', '') for name in valid_selection]}")
                         return valid_selection
+                    else:
+                        print(f"Invalid selection in file: {selected}")
+            else:
+                print(f"Selection file not found: {self.selection_file}")
+        except json.JSONDecodeError as e:
+            print(f"Error parsing selection file: {e}")
         except Exception as e:
             print(f"Error loading selection: {e}")
         
@@ -1175,13 +1194,18 @@ class VPetGame:
     def save_selection(self, selected_digimon):
         """Save Digimon selection to file"""
         try:
+            # Ensure the directory exists
+            selection_dir = os.path.dirname(self.selection_file)
+            if selection_dir and not os.path.exists(selection_dir):
+                os.makedirs(selection_dir, exist_ok=True)
+            
             data = {
                 'selected_digimon': selected_digimon,
                 'timestamp': pygame.time.get_ticks()
             }
             with open(self.selection_file, 'w') as f:
                 json.dump(data, f, indent=2)
-            print(f"Saved selection: {selected_digimon}")
+            print(f"Saved selection: {[name.replace('_dmc', '') for name in selected_digimon]}")
         except Exception as e:
             print(f"Error saving selection: {e}")
     
@@ -1190,31 +1214,74 @@ class VPetGame:
         if selected_digimon and len(selected_digimon) == 2:
             # Use provided selection
             digimon_names = selected_digimon
-            print(f"Using selected Digimon: {digimon_names}")
+            print(f"Using selected Digimon: {[name.replace('_dmc', '') for name in digimon_names]}")
         else:
             # Load saved selection or use random
             saved_selection = self.load_selection()
             if saved_selection:
                 digimon_names = saved_selection
-                print(f"Loaded saved selection: {digimon_names}")
+                print(f"Loaded saved selection: {[name.replace('_dmc', '') for name in digimon_names]}")
             else:
                 # Random selection as fallback
                 if len(self.available_digimon) >= 2:
                     digimon_names = random.sample(self.available_digimon, 2)
+                    print(f"Using random selection: {[name.replace('_dmc', '') for name in digimon_names]}")
                 else:
-                    # Ultimate fallback
-                    digimon_names = ["Agumon_dmc", "Gabumon_dmc"]
-                print(f"Using random selection: {digimon_names}")
+                    # Ultimate fallback - ensure these exist in available list
+                    fallback_names = ["Agumon_dmc", "Gabumon_dmc"]
+                    digimon_names = []
+                    for name in fallback_names:
+                        if name in self.available_digimon:
+                            digimon_names.append(name)
+                    
+                    # If fallbacks don't exist, use first two available
+                    if len(digimon_names) < 2 and len(self.available_digimon) >= 2:
+                        digimon_names = self.available_digimon[:2]
+                    elif len(digimon_names) < 2:
+                        # Last resort - use any available or create defaults
+                        if len(self.available_digimon) >= 1:
+                            digimon_names = [self.available_digimon[0], self.available_digimon[0]]
+                        else:
+                            digimon_names = ["Agumon_dmc", "Gabumon_dmc"]
+                    
+                    print(f"Using fallback selection: {[name.replace('_dmc', '') for name in digimon_names]}")
         
-        # Create first Digimon
-        digimon1_folder = os.path.join(self.sprites_dir, digimon_names[0])
-        self.digimon1 = Digimon(digimon1_folder, speed=2)
-        self.digimon1_name = digimon_names[0].replace("_dmc", "")
-        
-        # Create second Digimon
-        digimon2_folder = os.path.join(self.sprites_dir, digimon_names[1])
-        self.digimon2 = Digimon(digimon2_folder, speed=2)
-        self.digimon2_name = digimon_names[1].replace("_dmc", "")
+        # Validate that sprite folders exist before creating Digimon
+        try:
+            # Create first Digimon
+            digimon1_folder = os.path.join(self.sprites_dir, digimon_names[0])
+            if not os.path.exists(digimon1_folder):
+                print(f"Warning: Sprite folder not found: {digimon1_folder}")
+                # Use first available Digimon instead
+                if self.available_digimon:
+                    digimon_names[0] = self.available_digimon[0]
+                    digimon1_folder = os.path.join(self.sprites_dir, digimon_names[0])
+            
+            self.digimon1 = Digimon(digimon1_folder, speed=2)
+            self.digimon1_name = digimon_names[0].replace("_dmc", "")
+            
+            # Create second Digimon
+            digimon2_folder = os.path.join(self.sprites_dir, digimon_names[1])
+            if not os.path.exists(digimon2_folder):
+                print(f"Warning: Sprite folder not found: {digimon2_folder}")
+                # Use second available Digimon instead, or first if only one available
+                if len(self.available_digimon) >= 2:
+                    digimon_names[1] = self.available_digimon[1]
+                elif len(self.available_digimon) >= 1:
+                    digimon_names[1] = self.available_digimon[0]
+                digimon2_folder = os.path.join(self.sprites_dir, digimon_names[1])
+            
+            self.digimon2 = Digimon(digimon2_folder, speed=2)
+            self.digimon2_name = digimon_names[1].replace("_dmc", "")
+            
+        except Exception as e:
+            print(f"Error creating Digimon objects: {e}")
+            # Last resort fallback - create simple colored rectangles if sprite loading fails
+            print("Creating fallback Digimon...")
+            self.digimon1 = None
+            self.digimon2 = None
+            self.digimon1_name = "Default1"
+            self.digimon2_name = "Default2"
         
         # Randomize starting positions ensuring they don't start side by side
         min_distance = 100  # Minimum distance between them
