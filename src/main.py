@@ -5,6 +5,7 @@ import random
 import platform
 import time
 import math
+import json
 
 # Initialize Pygame
 pygame.init()
@@ -23,6 +24,296 @@ HEART_FLOAT_SPEED = 1  # Pixels per frame heart floats upward
 FOOD_FALL_SPEED = 3  # Pixels per frame food falls
 FOOD_LIFETIME = 10000  # 10 seconds in milliseconds before food disappears
 FOOD_SIZE = (30, 30)  # Size to scale meat to
+
+# Swipe gesture constants
+SWIPE_THRESHOLD = 50  # Minimum distance to be considered a swipe
+SWIPE_TIME_LIMIT = 500  # Maximum time for a swipe gesture in milliseconds
+
+# Selection UI constants
+SELECTION_GRID_COLS = 3  # 3 columns
+SELECTION_GRID_ROWS = 2  # 2 rows
+SELECTION_CELL_SIZE = 110  # Fits: (480-40 margins - 30 spacing)/3 = 136, use 110 for safety
+SELECTION_MARGIN = 10  # Spacing between cells
+
+class DigimonSelectionUI:
+    def __init__(self, screen, available_digimon, sprites_dir):
+        self.screen = screen
+        self.available_digimon = available_digimon
+        self.sprites_dir = sprites_dir
+        self.active = False
+        self.selected_digimon = []
+        self.page = 0
+        self.items_per_page = SELECTION_GRID_COLS * SELECTION_GRID_ROWS
+        self.max_pages = (len(available_digimon) + self.items_per_page - 1) // self.items_per_page
+        
+        # Load preview sprites (walking animation frame 0)
+        self.preview_sprites = {}
+        self.load_preview_sprites()
+        
+        # UI styling
+        self.background_color = (30, 30, 30, 200)  # Semi-transparent dark
+        self.cell_color = (60, 60, 60)
+        self.selected_color = (100, 200, 100)
+        self.text_color = (255, 255, 255)
+        self.button_color = (80, 80, 80)
+        self.button_hover_color = (120, 120, 120)
+        
+        # Font for text
+        self.font = pygame.font.Font(None, 24)
+        self.small_font = pygame.font.Font(None, 18)
+        
+        # Animation for walking preview
+        self.animation_timer = 0
+        self.animation_frame = 0
+        
+        # Load selection frame
+        self.selection_frame = None
+        self.load_selection_frame()
+    
+    def load_preview_sprites(self):
+        """Load walking animation frames (0 and 1) for each Digimon"""
+        for digimon_name in self.available_digimon:
+            folder_path = os.path.join(self.sprites_dir, digimon_name)
+            try:
+                # Load frame 0 and 1 for walking animation
+                frame_0_path = os.path.join(folder_path, "0.png")
+                frame_1_path = os.path.join(folder_path, "1.png")
+                
+                if os.path.exists(frame_0_path) and os.path.exists(frame_1_path):
+                    frame_0 = pygame.image.load(frame_0_path)
+                    frame_1 = pygame.image.load(frame_1_path)
+                    
+                    # Scale to fit in selection cell
+                    max_size = SELECTION_CELL_SIZE - 20
+                    frame_0 = pygame.transform.scale(frame_0, (max_size, max_size))
+                    frame_1 = pygame.transform.scale(frame_1, (max_size, max_size))
+                    
+                    self.preview_sprites[digimon_name] = [frame_0, frame_1]
+                else:
+                    print(f"Warning: Could not load preview sprites for {digimon_name}")
+            except Exception as e:
+                print(f"Error loading preview for {digimon_name}: {e}")
+    
+    def load_selection_frame(self):
+        """Load and scale the selection frame image"""
+        try:
+            frame_path = os.path.join("assets", "others", "frame.png")
+            if os.path.exists(frame_path):
+                self.selection_frame = pygame.image.load(frame_path)
+                # Scale frame to fit around selection cell (slightly larger than cell)
+                frame_size = SELECTION_CELL_SIZE + 10
+                self.selection_frame = pygame.transform.scale(self.selection_frame, (frame_size, frame_size))
+            else:
+                print("Warning: frame.png not found in assets/others/")
+                self.selection_frame = None
+        except Exception as e:
+            print(f"Error loading selection frame: {e}")
+            self.selection_frame = None
+    
+    def open(self, current_selection=None):
+        """Open the selection UI with current Digimon selection"""
+        self.active = True
+        self.selected_digimon = current_selection[:] if current_selection else []
+        self.page = 0
+        self.animation_timer = 0
+        self.animation_frame = 0
+    
+    def close(self):
+        """Close the selection UI"""
+        self.active = False
+    
+    def handle_click(self, mouse_pos):
+        """Handle mouse clicks in the selection UI"""
+        if not self.active:
+            return None
+        
+        # Calculate grid layout - ensure it fits within 480x320 screen
+        grid_width = SELECTION_GRID_COLS * SELECTION_CELL_SIZE + (SELECTION_GRID_COLS - 1) * SELECTION_MARGIN
+        start_x = (SCREEN_WIDTH - grid_width) // 2  # Center horizontally
+        start_y = 60  # Leave space for title and margin
+        
+        # Check if clicked on a Digimon cell
+        for row in range(SELECTION_GRID_ROWS):
+            for col in range(SELECTION_GRID_COLS):
+                index = self.page * self.items_per_page + row * SELECTION_GRID_COLS + col
+                if index >= len(self.available_digimon):
+                    break
+                
+                cell_x = start_x + col * (SELECTION_CELL_SIZE + SELECTION_MARGIN)
+                cell_y = start_y + row * (SELECTION_CELL_SIZE + SELECTION_MARGIN)
+                cell_rect = pygame.Rect(cell_x, cell_y, SELECTION_CELL_SIZE, SELECTION_CELL_SIZE)
+                
+                if cell_rect.collidepoint(mouse_pos):
+                    digimon_name = self.available_digimon[index]
+                    
+                    if digimon_name in self.selected_digimon:
+                        # Deselect
+                        self.selected_digimon.remove(digimon_name)
+                    elif len(self.selected_digimon) < 2:
+                        # Select (max 2)
+                        self.selected_digimon.append(digimon_name)
+                    else:
+                        # If 2 already selected, shift the list: remove first, add new
+                        self.selected_digimon.pop(0)  # Remove the oldest selection
+                        self.selected_digimon.append(digimon_name)  # Add the new one
+                    
+                    return 'selection_changed'
+        
+        # Check if clicked on side navigation arrows
+        grid_height = SELECTION_GRID_ROWS * SELECTION_CELL_SIZE + (SELECTION_GRID_ROWS - 1) * SELECTION_MARGIN
+        arrow_width = 40
+        arrow_height = grid_height
+        
+        # Left arrow (Previous page)
+        if self.page > 0:
+            left_arrow_rect = pygame.Rect(start_x - arrow_width - 10, start_y, arrow_width, arrow_height)
+            if left_arrow_rect.collidepoint(mouse_pos):
+                self.page -= 1
+                return 'page_changed'
+        
+        # Right arrow (Next page)
+        if self.page < self.max_pages - 1:
+            right_arrow_rect = pygame.Rect(start_x + grid_width + 10, start_y, arrow_width, arrow_height)
+            if right_arrow_rect.collidepoint(mouse_pos):
+                self.page += 1
+                return 'page_changed'
+        
+        # Confirm button (bottom center)
+        if len(self.selected_digimon) == 2:
+            button_y = SCREEN_HEIGHT - 35
+            confirm_button_rect = pygame.Rect(SCREEN_WIDTH // 2 - 40, button_y, 80, 30)
+            if confirm_button_rect.collidepoint(mouse_pos):
+                return 'confirm'
+        
+        # Close button (X in top right)
+        close_button_rect = pygame.Rect(SCREEN_WIDTH - 40, 10, 30, 30)
+        if close_button_rect.collidepoint(mouse_pos):
+            return 'close'
+        
+        return None
+    
+    def update(self):
+        """Update animation for walking previews"""
+        if self.active:
+            self.animation_timer += 1
+            if self.animation_timer >= 25:  # Change frame every 25 ticks (2.5 seconds at 10 FPS)
+                self.animation_timer = 0
+                self.animation_frame = 1 - self.animation_frame  # Toggle between 0 and 1
+    
+    def draw(self):
+        """Draw the selection UI"""
+        if not self.active:
+            return
+        
+        # Create semi-transparent overlay
+        overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+        overlay.set_alpha(200)
+        overlay.fill((30, 30, 30))
+        self.screen.blit(overlay, (0, 0))
+        
+        # Title
+        title_text = self.font.render("Select 2 Digimon", True, self.text_color)
+        title_rect = title_text.get_rect(center=(SCREEN_WIDTH // 2, 25))
+        self.screen.blit(title_text, title_rect)
+        
+        # Calculate grid layout
+        grid_width = SELECTION_GRID_COLS * SELECTION_CELL_SIZE + (SELECTION_GRID_COLS - 1) * SELECTION_MARGIN
+        start_x = (SCREEN_WIDTH - grid_width) // 2  # Center horizontally
+        start_y = 60  # Leave space for title and margin
+        
+        # Draw Digimon grid
+        for row in range(SELECTION_GRID_ROWS):
+            for col in range(SELECTION_GRID_COLS):
+                index = self.page * self.items_per_page + row * SELECTION_GRID_COLS + col
+                if index >= len(self.available_digimon):
+                    break
+                
+                digimon_name = self.available_digimon[index]
+                cell_x = start_x + col * (SELECTION_CELL_SIZE + SELECTION_MARGIN)
+                cell_y = start_y + row * (SELECTION_CELL_SIZE + SELECTION_MARGIN)
+                
+                # Draw walking animation (no background color)
+                if digimon_name in self.preview_sprites:
+                    sprite = self.preview_sprites[digimon_name][self.animation_frame]
+                    sprite_rect = sprite.get_rect(center=(cell_x + SELECTION_CELL_SIZE // 2, cell_y + SELECTION_CELL_SIZE // 2 - 10))
+                    self.screen.blit(sprite, sprite_rect)
+                
+                # Draw selection frame if this Digimon is selected
+                if digimon_name in self.selected_digimon and self.selection_frame:
+                    frame_x = cell_x - 5  # Center the frame around the cell
+                    frame_y = cell_y - 5
+                    self.screen.blit(self.selection_frame, (frame_x, frame_y))
+                
+                # Digimon name (remove _dmc suffix)
+                display_name = digimon_name.replace("_dmc", "")
+                name_text = self.small_font.render(display_name, True, self.text_color)
+                name_rect = name_text.get_rect(center=(cell_x + SELECTION_CELL_SIZE // 2, cell_y + SELECTION_CELL_SIZE - 10))
+                self.screen.blit(name_text, name_rect)
+        
+        # Page indicator - position under the grid
+        if self.max_pages > 1:
+            grid_height = SELECTION_GRID_ROWS * SELECTION_CELL_SIZE + (SELECTION_GRID_ROWS - 1) * SELECTION_MARGIN
+            grid_bottom = start_y + grid_height
+            page_text = f"Page {self.page + 1} / {self.max_pages}"
+            page_surface = self.small_font.render(page_text, True, self.text_color)
+            page_y = grid_bottom + 15  # 15 pixels below the grid
+            page_rect = page_surface.get_rect(center=(SCREEN_WIDTH // 2, page_y))
+            self.screen.blit(page_surface, page_rect)
+        
+        # Draw side navigation arrows
+        grid_height = SELECTION_GRID_ROWS * SELECTION_CELL_SIZE + (SELECTION_GRID_ROWS - 1) * SELECTION_MARGIN
+        arrow_width = 40
+        arrow_height = grid_height
+        
+        # Left arrow (Previous page)
+        if self.page > 0:
+            left_arrow_rect = pygame.Rect(start_x - arrow_width - 10, start_y, arrow_width, arrow_height)
+            pygame.draw.rect(self.screen, self.button_color, left_arrow_rect)
+            pygame.draw.rect(self.screen, self.text_color, left_arrow_rect, 2)
+            
+            # Draw left arrow shape
+            arrow_center_x = left_arrow_rect.centerx
+            arrow_center_y = left_arrow_rect.centery
+            arrow_points = [
+                (arrow_center_x + 10, arrow_center_y - 15),
+                (arrow_center_x - 10, arrow_center_y),
+                (arrow_center_x + 10, arrow_center_y + 15)
+            ]
+            pygame.draw.polygon(self.screen, self.text_color, arrow_points)
+        
+        # Right arrow (Next page)
+        if self.page < self.max_pages - 1:
+            right_arrow_rect = pygame.Rect(start_x + grid_width + 10, start_y, arrow_width, arrow_height)
+            pygame.draw.rect(self.screen, self.button_color, right_arrow_rect)
+            pygame.draw.rect(self.screen, self.text_color, right_arrow_rect, 2)
+            
+            # Draw right arrow shape
+            arrow_center_x = right_arrow_rect.centerx
+            arrow_center_y = right_arrow_rect.centery
+            arrow_points = [
+                (arrow_center_x - 10, arrow_center_y - 15),
+                (arrow_center_x + 10, arrow_center_y),
+                (arrow_center_x - 10, arrow_center_y + 15)
+            ]
+            pygame.draw.polygon(self.screen, self.text_color, arrow_points)
+        
+        # Confirm button (only if 2 Digimon selected)
+        if len(self.selected_digimon) == 2:
+            button_y = SCREEN_HEIGHT - 35
+            confirm_button_rect = pygame.Rect(SCREEN_WIDTH // 2 - 40, button_y, 80, 30)
+            pygame.draw.rect(self.screen, (100, 200, 100), confirm_button_rect)
+            pygame.draw.rect(self.screen, self.text_color, confirm_button_rect, 2)
+            confirm_text = self.small_font.render("Confirm", True, self.text_color)
+            confirm_text_rect = confirm_text.get_rect(center=confirm_button_rect.center)
+            self.screen.blit(confirm_text, confirm_text_rect)
+        
+        # Close button (X in top right)
+        close_button_rect = pygame.Rect(SCREEN_WIDTH - 40, 10, 30, 30)
+        pygame.draw.rect(self.screen, (200, 100, 100), close_button_rect)
+        pygame.draw.rect(self.screen, self.text_color, close_button_rect, 2)
+        close_text = self.font.render("X", True, self.text_color)
+        close_text_rect = close_text.get_rect(center=close_button_rect.center)
+        self.screen.blit(close_text, close_text_rect)
 
 class Food:
     def __init__(self, x, y, food_image):
@@ -401,6 +692,12 @@ class Digimon:
     def check_eating_position(self):
         """Check if Digimon is close enough to food to start eating"""
         if self.target_food and self.moving_to_food:
+            # Safety check: verify target food is still valid
+            if self.target_food.consumed or not hasattr(self.target_food, 'rect'):
+                print("Target food became invalid during approach - stopping")
+                self.stop_moving_to_food()
+                return False
+                
             distance = abs(self.rect.centerx - self.target_food.rect.centerx)
             if distance <= 35:  # Close enough to eat (food is 30px wide + 5px margin)
                 self.eating_position_reached = True
@@ -559,6 +856,12 @@ class Digimon:
         
         # Handle movement towards food
         if self.moving_to_food and self.target_food:
+            # Safety check: verify target food still exists and is valid
+            if self.target_food.consumed or not hasattr(self.target_food, 'rect'):
+                print("Target food became invalid - stopping movement")
+                self.stop_moving_to_food()
+                return
+            
             # Check if we've reached eating position
             if self.check_eating_position():
                 return  # Start eating, don't continue with normal movement
@@ -791,31 +1094,127 @@ class VPetGame:
         self.cursor_visible = True  # Always start with cursor visible on all platforms
         self.last_mouse_pos = pygame.mouse.get_pos()
         
-        # Get list of available Digimon
+        # Swipe gesture detection
+        self.swipe_start_pos = None
+        self.swipe_start_time = 0
+        self.is_tracking_swipe = False
+        
+        # Initialize selection file path and available Digimon
+        self.selection_file = os.path.join(os.path.dirname(__file__), "..", "digimon_selection.json")
+        self.sprites_dir = sprites_dir
+        self.available_digimon = self.get_available_digimon(sprites_dir)
+        
+        # Initialize selection UI
+        self.selection_ui = DigimonSelectionUI(self.screen, self.available_digimon, sprites_dir)
+        
+        # Initialize Digimon with saved or random selection
+        self.initialize_digimon()
+        
+        print(f"Game started with {self.digimon1_name} and {self.digimon2_name}!")
+        
+        # Load sushi food image  
+        food_dir = os.path.join(os.path.dirname(__file__), "..", "assets", "food")
+        sushi_path = os.path.join(food_dir, "sushi.png")
+        
+        try:
+            if os.path.exists(sushi_path):
+                self.food_image = pygame.image.load(sushi_path)
+                print(f"Loaded sushi image: {sushi_path}")
+            else:
+                print(f"Sushi image not found: {sushi_path}")
+        except Exception as e:
+            print(f"Could not load sushi image: {e}")
+            self.food_image = None
+        
+        self.running = True
+    
+    def is_raspberry_pi(self):
+        """Check if running on a Raspberry Pi"""
+        try:
+            with open('/proc/cpuinfo', 'r') as f:
+                return 'Raspberry Pi' in f.read()
+        except:
+            return False
+    
+    def get_available_digimon(self, sprites_dir):
+        """Get list of available Digimon from sprites directory"""
         available_digimon = []
         if os.path.exists(sprites_dir):
             for folder in os.listdir(sprites_dir):
                 if folder.endswith("_dmc") and os.path.isdir(os.path.join(sprites_dir, folder)):
-                    available_digimon.append(folder)
+                    # Check if the folder has required sprite files
+                    folder_path = os.path.join(sprites_dir, folder)
+                    if (os.path.exists(os.path.join(folder_path, "0.png")) and 
+                        os.path.exists(os.path.join(folder_path, "1.png"))):
+                        available_digimon.append(folder)
         
-        if len(available_digimon) < 2:
-            # Fallback to original if not enough Digimon found
-            available_digimon = ["Agumon_dmc", "Gabumon_dmc"]
+        # Sort for consistent ordering
+        available_digimon.sort()
+        return available_digimon
+    
+    def load_selection(self):
+        """Load saved Digimon selection from file"""
+        try:
+            if os.path.exists(self.selection_file):
+                with open(self.selection_file, 'r') as f:
+                    data = json.load(f)
+                    selected = data.get('selected_digimon', [])
+                    # Validate that the selected Digimon still exist
+                    valid_selection = []
+                    for digimon in selected:
+                        if digimon in self.available_digimon:
+                            valid_selection.append(digimon)
+                    
+                    if len(valid_selection) == 2:
+                        return valid_selection
+        except Exception as e:
+            print(f"Error loading selection: {e}")
         
-        # Randomly select 2 different Digimon
-        selected_digimon = random.sample(available_digimon, 2)
+        return None
+    
+    def save_selection(self, selected_digimon):
+        """Save Digimon selection to file"""
+        try:
+            data = {
+                'selected_digimon': selected_digimon,
+                'timestamp': pygame.time.get_ticks()
+            }
+            with open(self.selection_file, 'w') as f:
+                json.dump(data, f, indent=2)
+            print(f"Saved selection: {selected_digimon}")
+        except Exception as e:
+            print(f"Error saving selection: {e}")
+    
+    def initialize_digimon(self, selected_digimon=None):
+        """Initialize the two Digimon based on selection or random choice"""
+        if selected_digimon and len(selected_digimon) == 2:
+            # Use provided selection
+            digimon_names = selected_digimon
+            print(f"Using selected Digimon: {digimon_names}")
+        else:
+            # Load saved selection or use random
+            saved_selection = self.load_selection()
+            if saved_selection:
+                digimon_names = saved_selection
+                print(f"Loaded saved selection: {digimon_names}")
+            else:
+                # Random selection as fallback
+                if len(self.available_digimon) >= 2:
+                    digimon_names = random.sample(self.available_digimon, 2)
+                else:
+                    # Ultimate fallback
+                    digimon_names = ["Agumon_dmc", "Gabumon_dmc"]
+                print(f"Using random selection: {digimon_names}")
         
         # Create first Digimon
-        digimon1_folder = os.path.join(sprites_dir, selected_digimon[0])
+        digimon1_folder = os.path.join(self.sprites_dir, digimon_names[0])
         self.digimon1 = Digimon(digimon1_folder, speed=2)
-        self.digimon1_name = selected_digimon[0].replace("_dmc", "")
+        self.digimon1_name = digimon_names[0].replace("_dmc", "")
         
         # Create second Digimon
-        digimon2_folder = os.path.join(sprites_dir, selected_digimon[1])
+        digimon2_folder = os.path.join(self.sprites_dir, digimon_names[1])
         self.digimon2 = Digimon(digimon2_folder, speed=2)
-        self.digimon2_name = selected_digimon[1].replace("_dmc", "")
-        
-        print(f"Game started with {self.digimon1_name} and {self.digimon2_name}!")
+        self.digimon2_name = digimon_names[1].replace("_dmc", "")
         
         # Randomize starting positions ensuring they don't start side by side
         min_distance = 100  # Minimum distance between them
@@ -859,52 +1258,7 @@ class VPetGame:
                 self.digimon2.greeting_frames = self.digimon2.original_greeting_frames.copy()
                 self.digimon2.image = self.digimon2.frames[self.digimon2.current_frame]
                 self.digimon2.flipped = False
-        
-        # Load sushi food image  
-        food_dir = os.path.join(os.path.dirname(__file__), "..", "assets", "food")
-        sushi_path = os.path.join(food_dir, "sushi.png")
-        
-        try:
-            if os.path.exists(sushi_path):
-                self.food_image = pygame.image.load(sushi_path)
-                print(f"Loaded sushi image: {sushi_path}")
-            else:
-                print(f"Sushi image not found: {sushi_path}")
-        except Exception as e:
-            print(f"Could not load sushi image: {e}")
-            self.food_image = None
-        
-        self.running = True
-    
-    def is_raspberry_pi(self):
-        """
-        Detect if the code is running on a Raspberry Pi.
-        Returns True if running on Raspberry Pi, False otherwise.
-        """
-        try:
-            # Check if we're on Linux with ARM architecture
-            if platform.system() == 'Linux' and platform.machine().startswith('arm'):
-                return True
-            
-            # Additional check: look for Raspberry Pi specific files
-            if os.path.exists('/proc/device-tree/model'):
-                with open('/proc/device-tree/model', 'r') as f:
-                    model = f.read().lower()
-                    if 'raspberry pi' in model:
-                        return True
-            
-            # Check for Raspberry Pi in /proc/cpuinfo (fallback)
-            if os.path.exists('/proc/cpuinfo'):
-                with open('/proc/cpuinfo', 'r') as f:
-                    cpuinfo = f.read().lower()
-                    if 'raspberry pi' in cpuinfo or 'bcm' in cpuinfo:
-                        return True
-                        
-        except Exception as e:
-            print(f"Error detecting Raspberry Pi: {e}")
-            
-        return False
-    
+                
     def load_all_backgrounds(self):
         """
         Load all background images from the background directory.
@@ -976,21 +1330,30 @@ class VPetGame:
         background.fill(BACKGROUND_COLOR)
         return background
     
-    def change_background(self):
+    def change_background(self, direction=1):
         """
-        Cycle to the next background image.
+        Cycle to the next or previous background image.
+        Args:
+            direction: 1 for next background, -1 for previous background
         """
         if self.backgrounds:
-            # Move to next background (cycle back to 0 if at end)
-            self.current_background_index = (self.current_background_index + 1) % len(self.backgrounds)
+            if direction == 1:
+                # Move to next background (cycle back to 0 if at end)
+                self.current_background_index = (self.current_background_index + 1) % len(self.backgrounds)
+                direction_text = "Next"
+            else:
+                # Move to previous background (cycle to end if at 0)
+                self.current_background_index = (self.current_background_index - 1) % len(self.backgrounds)
+                direction_text = "Previous"
+            
             self.background = self.backgrounds[self.current_background_index]
             
             # Get the filename for display
             if self.current_background_index < len(self.background_files):
                 current_bg_name = self.background_files[self.current_background_index]
-                print(f"Background changed to: {current_bg_name} ({self.current_background_index + 1}/{len(self.backgrounds)})")
+                print(f"{direction_text} background: {current_bg_name} ({self.current_background_index + 1}/{len(self.backgrounds)})")
             else:
-                print(f"Background changed to: {self.current_background_index + 1}/{len(self.backgrounds)}")
+                print(f"{direction_text} background: {self.current_background_index + 1}/{len(self.backgrounds)}")
         else:
             print("No backgrounds available to cycle through")
     
@@ -1034,11 +1397,38 @@ class VPetGame:
                     mouse_pos = pygame.mouse.get_pos()
                     current_time = pygame.time.get_ticks()
                     
+                    # If selection UI is active, handle its events
+                    if self.selection_ui.active:
+                        ui_result = self.selection_ui.handle_click(mouse_pos)
+                        if ui_result == 'confirm':
+                            # Save and apply the new selection
+                            if len(self.selection_ui.selected_digimon) == 2:
+                                self.save_selection(self.selection_ui.selected_digimon)
+                                self.initialize_digimon(self.selection_ui.selected_digimon)
+                                print(f"Selection confirmed: {[name.replace('_dmc', '') for name in self.selection_ui.selected_digimon]}")
+                            self.selection_ui.close()
+                        elif ui_result == 'close':
+                            self.selection_ui.close()
+                        continue  # Skip normal game input while UI is active
+                    
+                    # Start swipe tracking
+                    self.swipe_start_pos = mouse_pos
+                    self.swipe_start_time = current_time
+                    self.is_tracking_swipe = True
+                    
                     # Check if tapped on upper half of screen for background change
                     if mouse_pos[1] < SCREEN_HEIGHT // 2:  # Upper half of screen
                         # Check for double-tap
                         if current_time - self.last_tap_time < self.double_tap_delay:
-                            self.change_background()
+                            # Check if tap is on left or right half of upper screen
+                            if mouse_pos[0] < SCREEN_WIDTH // 2:
+                                # Left half - go to previous background
+                                self.change_background(-1)
+                                print(f"Double-tap on left upper half - previous background")
+                            else:
+                                # Right half - go to next background
+                                self.change_background(1)
+                                print(f"Double-tap on right upper half - next background")
                             self.last_tap_time = 0  # Reset to prevent triple-tap
                         else:
                             self.last_tap_time = current_time
@@ -1068,8 +1458,46 @@ class VPetGame:
                         # If didn't click on Digimon, drop food
                         if not digimon_clicked and self.sushi_image:
                             self.drop_food(mouse_pos[0], mouse_pos[1])
+            
+            elif event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1 and self.is_tracking_swipe:  # Left mouse button release
+                    # Check for swipe gesture
+                    current_time = pygame.time.get_ticks()
+                    mouse_pos = pygame.mouse.get_pos()
+                    
+                    if self.swipe_start_pos:
+                        # Calculate swipe distance and time
+                        dx = mouse_pos[0] - self.swipe_start_pos[0]
+                        dy = mouse_pos[1] - self.swipe_start_pos[1]
+                        distance = math.sqrt(dx * dx + dy * dy)
+                        time_elapsed = current_time - self.swipe_start_time
+                        
+                        # Check for swipe right gesture
+                        if (distance >= SWIPE_THRESHOLD and 
+                            time_elapsed <= SWIPE_TIME_LIMIT and
+                            dx >= SWIPE_THRESHOLD and 
+                            abs(dy) <= SWIPE_THRESHOLD):  # Mainly horizontal movement
+                            
+                            print("Swipe right detected - opening Digimon selection")
+                            # Get current selection for the UI
+                            current_selection = [
+                                self.digimon1_name + "_dmc",
+                                self.digimon2_name + "_dmc"
+                            ]
+                            self.selection_ui.open(current_selection)
+                    
+                    # Reset swipe tracking
+                    self.is_tracking_swipe = False
+                    self.swipe_start_pos = None
     
     def update(self):
+        # Update selection UI animation
+        self.selection_ui.update()
+        
+        # Skip normal game updates if selection UI is active
+        if self.selection_ui.active:
+            return
+        
         # Store previous positions
         prev_digimon1_x = self.digimon1.rect.x
         prev_digimon2_x = self.digimon2.rect.x
@@ -1080,6 +1508,8 @@ class VPetGame:
         
         # Update food items and handle Digimon interactions
         active_food = []
+        removed_food = []
+        
         for food in self.food_items:
             if food.update():  # Food returns True if it should stay
                 # Check if food is on ground and if any Digimon should move towards it
@@ -1102,7 +1532,18 @@ class VPetGame:
                             self.digimon2.move_to_food(food)
                 
                 active_food.append(food)  # Keep this food
-            # If food.update() returns False, food is removed (lifetime expired or consumed)
+            else:
+                # Food is being removed (lifetime expired or consumed)
+                removed_food.append(food)
+        
+        # Clean up Digimon references to removed food
+        for food in removed_food:
+            if self.digimon1.target_food == food:
+                print("Digimon1's target food disappeared - stopping movement")
+                self.digimon1.stop_moving_to_food()
+            if self.digimon2.target_food == food:
+                print("Digimon2's target food disappeared - stopping movement")
+                self.digimon2.stop_moving_to_food()
         
         self.food_items = active_food
         
@@ -1161,6 +1602,10 @@ class VPetGame:
         # Draw all active food items
         for food in self.food_items:
             food.draw(self.screen)
+        
+        # Draw selection UI on top if active
+       
+        self.selection_ui.draw()
         
         # Ground line exists but is invisible (no drawing)
         # pygame.draw.line(self.screen, (34, 139, 34), 
