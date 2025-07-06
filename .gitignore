@@ -50,3 +50,6 @@ saves/
 # Temporary files
 *.tmp
 *.bak
+
+# LVGL Demo (for demonstration only, not tracked in git)
+LVGL_vpet_Demo/
