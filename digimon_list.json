@@ -1,0 +1,1526 @@
+[
+  {
+    "name": "Aegisdramon",
+    "stage": "Super Ultimate",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "AeroVeedramon",
+    "stage": "Perfect",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Agumon",
+    "stage": "Child",
+    "attribute": "Vaccine",
+    "source": "Digimon Color Ver. 1"
+  },
+  {
+    "name": "Airdramon",
+    "stage": "Adult",
+    "attribute": "Vaccine",
+    "source": "Digimon Color Ver. 1"
+  },
+  {
+    "name": "Amphimon",
+    "stage": "Ultimate",
+    "attribute": "Data",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "Andromon",
+    "stage": "Perfect",
+    "attribute": "Vaccine",
+    "source": "Digimon Color Ver. 3"
+  },
+  {
+    "name": "Andromon",
+    "stage": "Perfect",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "Angemon",
+    "stage": "Adult",
+    "attribute": "Vaccine",
+    "source": "Digimon Color Ver. 2"
+  },
+  {
+    "name": "Angewomon",
+    "stage": "Perfect",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "Angoramon",
+    "stage": "Child",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "Anubismon",
+    "stage": "Ultimate",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "Apemon",
+    "stage": "Adult",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "Bakemon",
+    "stage": "Adult",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 3"
+  },
+  {
+    "name": "Bakemon",
+    "stage": "Child",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "Bakemon",
+    "stage": "Adult",
+    "attribute": "Virus",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "BanchoLeomon",
+    "stage": "Ultimate",
+    "attribute": "Vaccine",
+    "source": "Digimon Color Ver. 3"
+  },
+  {
+    "name": "BanchoMamemon",
+    "stage": "Ultimate",
+    "attribute": "Data",
+    "source": "Digimon Color Ver. 1"
+  },
+  {
+    "name": "Betamon",
+    "stage": "Child",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 1"
+  },
+  {
+    "name": "BigMamemon",
+    "stage": "Perfect",
+    "attribute": "Data",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "Birdramon",
+    "stage": "Adult",
+    "attribute": "Vaccine",
+    "source": "Digimon Color Ver. 2"
+  },
+  {
+    "name": "Birdramon",
+    "stage": "Adult",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Biyomon",
+    "stage": "Child",
+    "attribute": "Vaccine",
+    "source": "Digimon Color Ver. 4"
+  },
+  {
+    "name": "Biyomon",
+    "stage": "Child",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Blastmon",
+    "stage": "Ultimate",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "BlitzGreymon",
+    "stage": "Ultimate",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 1"
+  },
+  {
+    "name": "BloomLordmon",
+    "stage": "Ultimate",
+    "attribute": "Vaccine",
+    "source": "Digimon Color Ver. 4"
+  },
+  {
+    "name": "Blossomon",
+    "stage": "Perfect",
+    "attribute": "Data",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Boltboutamon",
+    "stage": "Super Ultimate",
+    "attribute": "Virus",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "Boltmon",
+    "stage": "Ultimate",
+    "attribute": "Data",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "Botamon",
+    "stage": "Baby I",
+    "attribute": "Free",
+    "source": "Digimon Color Ver. 1"
+  },
+  {
+    "name": "Brigadramon",
+    "stage": "Ultimate",
+    "attribute": "Virus",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "Bukamon",
+    "stage": "Baby II",
+    "attribute": "Free",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "Callismon",
+    "stage": "Ultimate",
+    "attribute": "Virus",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "Candlemon",
+    "stage": "Child",
+    "attribute": "Data",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "Cargodramon",
+    "stage": "Perfect",
+    "attribute": "Virus",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "Centarumon",
+    "stage": "Adult",
+    "attribute": "Data",
+    "source": "Digimon Color Ver. 3"
+  },
+  {
+    "name": "Cernumon",
+    "stage": "Super Ultimate",
+    "attribute": "Data",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Chaosdramon",
+    "stage": "Super Ultimate",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 4"
+  },
+  {
+    "name": "Chaosdramon",
+    "stage": "Super Ultimate",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 5"
+  },
+  {
+    "name": "Chaosdramon",
+    "stage": "Super Ultimate",
+    "attribute": "Virus",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "Chaosmon",
+    "stage": "Super Ultimate",
+    "attribute": "Vaccine",
+    "source": "Digimon Color Ver. 3"
+  },
+  {
+    "name": "Chaosmon",
+    "stage": "Super Ultimate",
+    "attribute": "Vaccine",
+    "source": "Digimon Color Ver. 4"
+  },
+  {
+    "name": "Cherrymon",
+    "stage": "Perfect",
+    "attribute": "Virus",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Choromon",
+    "stage": "Baby I",
+    "attribute": "Free",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "Clockmon",
+    "stage": "Adult",
+    "attribute": "Data",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "Coelamon",
+    "stage": "Adult",
+    "attribute": "Data",
+    "source": "Digimon Color Ver. 4"
+  },
+  {
+    "name": "Coelamon",
+    "stage": "Adult",
+    "attribute": "Data",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "Commandramon",
+    "stage": "Child",
+    "attribute": "Virus",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "Crabmon",
+    "stage": "Child",
+    "attribute": "Data",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "Creepymon",
+    "stage": "Ultimate",
+    "attribute": "Virus",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "CresGarurumon",
+    "stage": "Ultimate",
+    "attribute": "Data",
+    "source": "Digimon Color Ver. 2"
+  },
+  {
+    "name": "Cthyllamon",
+    "stage": "Ultimate",
+    "attribute": "Virus",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "Cyberdramon",
+    "stage": "Perfect",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "Cyclonemon",
+    "stage": "Adult",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 5"
+  },
+  {
+    "name": "Darkdramon",
+    "stage": "Ultimate",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 4"
+  },
+  {
+    "name": "DarkTyrannomon",
+    "stage": "Adult",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 5"
+  },
+  {
+    "name": "Datamon",
+    "stage": "Perfect",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 5"
+  },
+  {
+    "name": "Deltamon",
+    "stage": "Adult",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 5"
+  },
+  {
+    "name": "DemiDevimon",
+    "stage": "Child",
+    "attribute": "Virus",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "DemiMeramon",
+    "stage": "Baby II",
+    "attribute": "Free",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "Deputymon",
+    "stage": "Adult",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "Deramon",
+    "stage": "Perfect",
+    "attribute": "Data",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Devidramon",
+    "stage": "Adult",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 5"
+  },
+  {
+    "name": "Devimon",
+    "stage": "Adult",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 1"
+  },
+  {
+    "name": "Devimon",
+    "stage": "Adult",
+    "attribute": "Virus",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "Diarbbitmon",
+    "stage": "Ultimate",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "Digitamamon",
+    "stage": "Perfect",
+    "attribute": "Data",
+    "source": "Digimon Color Ver. 4"
+  },
+  {
+    "name": "Divemon",
+    "stage": "Perfect",
+    "attribute": "Data",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "Dokugumon",
+    "stage": "Adult",
+    "attribute": "Virus",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "Dolphmon",
+    "stage": "Adult",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "Dragomon",
+    "stage": "Perfect",
+    "attribute": "Virus",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "Drimogemon",
+    "stage": "Adult",
+    "attribute": "Data",
+    "source": "Digimon Color Ver. 3"
+  },
+  {
+    "name": "Ebemon",
+    "stage": "Ultimate",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 2"
+  },
+  {
+    "name": "Ebidramon",
+    "stage": "Adult",
+    "attribute": "Data",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "ElDradimon",
+    "stage": "Ultimate",
+    "attribute": "Data",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "Elecmon",
+    "stage": "Child",
+    "attribute": "Data",
+    "source": "Digimon Color Ver. 2"
+  },
+  {
+    "name": "Etemon",
+    "stage": "Perfect",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 3"
+  },
+  {
+    "name": "ExTyrannomon",
+    "stage": "Perfect",
+    "attribute": "Vaccine",
+    "source": "Digimon Color Ver. 5"
+  },
+  {
+    "name": "Fenriloogamon",
+    "stage": "Ultimate",
+    "attribute": "Virus",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "Floramon",
+    "stage": "Child",
+    "attribute": "Data",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Flymon",
+    "stage": "Adult",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 5"
+  },
+  {
+    "name": "Frigimon",
+    "stage": "Adult",
+    "attribute": "Vaccine",
+    "source": "Digimon Color Ver. 2"
+  },
+  {
+    "name": "Gabumon",
+    "stage": "Child",
+    "attribute": "Data",
+    "source": "Digimon Color Ver. 2"
+  },
+  {
+    "name": "Gaiomon",
+    "stage": "Ultimate",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 5"
+  },
+  {
+    "name": "Galacticmon",
+    "stage": "Ultimate",
+    "attribute": "Free",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "Galemon",
+    "stage": "Adult",
+    "attribute": "Data",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Gankoomon",
+    "stage": "Ultimate",
+    "attribute": "Data",
+    "source": "Digimon Color Ver. 4"
+  },
+  {
+    "name": "Garbagemon",
+    "stage": "Perfect",
+    "attribute": "Virus",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Garudamon",
+    "stage": "Perfect",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Garurumon",
+    "stage": "Adult",
+    "attribute": "Vaccine",
+    "source": "Digimon Color Ver. 2"
+  },
+  {
+    "name": "Garurumon",
+    "stage": "Adult",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "Gatomon",
+    "stage": "Adult",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "Gazimon",
+    "stage": "Child",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 5"
+  },
+  {
+    "name": "Gekomon",
+    "stage": "Adult",
+    "attribute": "Virus",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "Gesomon",
+    "stage": "Adult",
+    "attribute": "Virus",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "Giromon",
+    "stage": "Perfect",
+    "attribute": "Vaccine",
+    "source": "Digimon Color Ver. 3"
+  },
+  {
+    "name": "Gizamon",
+    "stage": "Child",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 5"
+  },
+  {
+    "name": "Gomamon",
+    "stage": "Child",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "Gotsumon",
+    "stage": "Child",
+    "attribute": "Data",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "GrandGalemon",
+    "stage": "Perfect",
+    "attribute": "Data",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "GranKuwagamon",
+    "stage": "Ultimate",
+    "attribute": "Free",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "Greymon",
+    "stage": "Adult",
+    "attribute": "Vaccine",
+    "source": "Digimon Color Ver. 1"
+  },
+  {
+    "name": "Greymon",
+    "stage": "Adult",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "Gryphonmon",
+    "stage": "Ultimate",
+    "attribute": "Data",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Guardromon",
+    "stage": "Adult",
+    "attribute": "Virus",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "Hagurumon",
+    "stage": "Child",
+    "attribute": "Virus",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "HerculesKabuterimon",
+    "stage": "Ultimate",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "Hi-Commandramon",
+    "stage": "Adult",
+    "attribute": "Virus",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "HiAndromon",
+    "stage": "Ultimate",
+    "attribute": "Vaccine",
+    "source": "Digimon Color Ver. 3"
+  },
+  {
+    "name": "HiAndromon",
+    "stage": "Ultimate",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "Hydramon",
+    "stage": "Ultimate",
+    "attribute": "Virus",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Ikkakumon",
+    "stage": "Adult",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "Jagamon",
+    "stage": "Perfect",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "Jellymon",
+    "stage": "Child",
+    "attribute": "Data",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "JumboGamemon",
+    "stage": "Ultimate",
+    "attribute": "Data",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "Kabuterimon",
+    "stage": "Adult",
+    "attribute": "Vaccine",
+    "source": "Digimon Color Ver. 2"
+  },
+  {
+    "name": "Kabuterimon",
+    "stage": "Adult",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "Kapurimon",
+    "stage": "Baby II",
+    "attribute": "Free",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "Kimeramon",
+    "stage": "Perfect",
+    "attribute": "Data",
+    "source": "Digimon Color Ver. 3"
+  },
+  {
+    "name": "Kiwimon",
+    "stage": "Adult",
+    "attribute": "Data",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Knightmon",
+    "stage": "Perfect",
+    "attribute": "Data",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "Kokatorimon",
+    "stage": "Adult",
+    "attribute": "Data",
+    "source": "Digimon Color Ver. 4"
+  },
+  {
+    "name": "Kokuwamon",
+    "stage": "Child",
+    "attribute": "Data",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "Koromon",
+    "stage": "Baby II",
+    "attribute": "Free",
+    "source": "Digimon Color Ver. 1"
+  },
+  {
+    "name": "Kunemon",
+    "stage": "Child",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 3"
+  },
+  {
+    "name": "Kuwagamon",
+    "stage": "Adult",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 4"
+  },
+  {
+    "name": "Kuwagamon",
+    "stage": "Adult",
+    "attribute": "Virus",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "LadyDevimon",
+    "stage": "Perfect",
+    "attribute": "Virus",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "Lamortmon",
+    "stage": "Perfect",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "Leomon",
+    "stage": "Adult",
+    "attribute": "Vaccine",
+    "source": "Digimon Color Ver. 4"
+  },
+  {
+    "name": "Lillymon",
+    "stage": "Perfect",
+    "attribute": "Data",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Loogamon",
+    "stage": "Child",
+    "attribute": "Virus",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "Loogarmon",
+    "stage": "Adult",
+    "attribute": "Virus",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "Machinedramon",
+    "stage": "Ultimate",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 5"
+  },
+  {
+    "name": "Machinedramon",
+    "stage": "Ultimate",
+    "attribute": "Virus",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "Magnadramon",
+    "stage": "Ultimate",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "Mamemon",
+    "stage": "Perfect",
+    "attribute": "Data",
+    "source": "Digimon Color Ver. 1"
+  },
+  {
+    "name": "Mammothmon",
+    "stage": "Perfect",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "MarineAngemon",
+    "stage": "Ultimate",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "MarineDevimon",
+    "stage": "Perfect",
+    "attribute": "Virus",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "Mastemon",
+    "stage": "Super Ultimate",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "Mastemon",
+    "stage": "Super Ultimate",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "Megadramon",
+    "stage": "Perfect",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 4"
+  },
+  {
+    "name": "Megadramon",
+    "stage": "Perfect",
+    "attribute": "Virus",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "MegaKabuterimon (Red)",
+    "stage": "Perfect",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "MegaSeadramon",
+    "stage": "Perfect",
+    "attribute": "Data",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "Mekanorimon",
+    "stage": "Adult",
+    "attribute": "Virus",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "Meramon",
+    "stage": "Adult",
+    "attribute": "Data",
+    "source": "Digimon Color Ver. 1"
+  },
+  {
+    "name": "Meramon",
+    "stage": "Adult",
+    "attribute": "Data",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "MetalEtemon",
+    "stage": "Ultimate",
+    "attribute": "Virus",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "MetalGarurumon",
+    "stage": "Ultimate",
+    "attribute": "Data",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "MetalGreymon (Vaccine)",
+    "stage": "Perfect",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "MetalGreymon (Virus)",
+    "stage": "Perfect",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 1"
+  },
+  {
+    "name": "MetalMamemon",
+    "stage": "Perfect",
+    "attribute": "Data",
+    "source": "Digimon Color Ver. 2"
+  },
+  {
+    "name": "MetalSeadramon",
+    "stage": "Ultimate",
+    "attribute": "Data",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "MetalTyrannomon",
+    "stage": "Perfect",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 5"
+  },
+  {
+    "name": "Millenniummon",
+    "stage": "Super Ultimate",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 3"
+  },
+  {
+    "name": "Millenniummon",
+    "stage": "Super Ultimate",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 5"
+  },
+  {
+    "name": "Mitamamon",
+    "stage": "Super Ultimate",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "Mitamamon",
+    "stage": "Super Ultimate",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Mojyamon",
+    "stage": "Adult",
+    "attribute": "Vaccine",
+    "source": "Digimon Color Ver. 4"
+  },
+  {
+    "name": "Mokumon",
+    "stage": "Baby I",
+    "attribute": "Free",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "Monochromon",
+    "stage": "Adult",
+    "attribute": "Data",
+    "source": "Digimon Color Ver. 4"
+  },
+  {
+    "name": "Monochromon",
+    "stage": "Adult",
+    "attribute": "Data",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "Monzaemon",
+    "stage": "Perfect",
+    "attribute": "Vaccine",
+    "source": "Digimon Color Ver. 1"
+  },
+  {
+    "name": "Motimon",
+    "stage": "Baby II",
+    "attribute": "Free",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "Mushroomon",
+    "stage": "Child",
+    "attribute": "Virus",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Myotismon",
+    "stage": "Perfect",
+    "attribute": "Virus",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "Nanimon",
+    "stage": "Adult",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 4"
+  },
+  {
+    "name": "NoblePumpkinmon",
+    "stage": "Ultimate",
+    "attribute": "Data",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "Numemon",
+    "stage": "Adult",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 1"
+  },
+  {
+    "name": "Nyokimon",
+    "stage": "Baby I",
+    "attribute": "Free",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Octomon",
+    "stage": "Adult",
+    "attribute": "Virus",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "Ogremon",
+    "stage": "Adult",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 3"
+  },
+  {
+    "name": "Okuwamon",
+    "stage": "Perfect",
+    "attribute": "Virus",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "Omnimon",
+    "stage": "Super Ultimate",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "Omnimon Alter-S",
+    "stage": "Super Ultimate",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 1"
+  },
+  {
+    "name": "Omnimon Alter-S",
+    "stage": "Super Ultimate",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 2"
+  },
+  {
+    "name": "Otamamon",
+    "stage": "Child",
+    "attribute": "Virus",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "Pabumon",
+    "stage": "Baby I",
+    "attribute": "Free",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "Pagumon",
+    "stage": "Baby II",
+    "attribute": "Free",
+    "source": "Digimon Color Ver. 5"
+  },
+  {
+    "name": "Palmon",
+    "stage": "Child",
+    "attribute": "Data",
+    "source": "Digimon Color Ver. 4"
+  },
+  {
+    "name": "Palmon",
+    "stage": "Child",
+    "attribute": "Data",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Patamon",
+    "stage": "Child",
+    "attribute": "Data",
+    "source": "Digimon Color Ver. 3"
+  },
+  {
+    "name": "Phantomon",
+    "stage": "Perfect",
+    "attribute": "Virus",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "Phoenixmon",
+    "stage": "Ultimate",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Pichimon",
+    "stage": "Baby I",
+    "attribute": "Free",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "Piedmon",
+    "stage": "Ultimate",
+    "attribute": "Virus",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "Piximon",
+    "stage": "Perfect",
+    "attribute": "Data",
+    "source": "Digimon Color Ver. 4"
+  },
+  {
+    "name": "Piximon",
+    "stage": "Perfect",
+    "attribute": "Data",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "Plesiomon",
+    "stage": "Ultimate",
+    "attribute": "Data",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "Poyomon",
+    "stage": "Baby I",
+    "attribute": "Free",
+    "source": "Digimon Color Ver. 3"
+  },
+  {
+    "name": "Pteromon",
+    "stage": "Child",
+    "attribute": "Data",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Pukumon",
+    "stage": "Ultimate",
+    "attribute": "Virus",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "Pumpkinmon",
+    "stage": "Perfect",
+    "attribute": "Data",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "Punimon",
+    "stage": "Baby I",
+    "attribute": "Free",
+    "source": "Digimon Color Ver. 2"
+  },
+  {
+    "name": "Puppetmon",
+    "stage": "Ultimate",
+    "attribute": "Virus",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Rafflesimon",
+    "stage": "Ultimate",
+    "attribute": "Data",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Raidenmon",
+    "stage": "Ultimate",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 5"
+  },
+  {
+    "name": "Raremon",
+    "stage": "Adult",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 5"
+  },
+  {
+    "name": "Reapermon",
+    "stage": "Ultimate",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 3"
+  },
+  {
+    "name": "RedVegiemon",
+    "stage": "Adult",
+    "attribute": "Virus",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Rosemon",
+    "stage": "Ultimate",
+    "attribute": "Data",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "SaberLeomon",
+    "stage": "Ultimate",
+    "attribute": "Data",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "Scorpiomon",
+    "stage": "Perfect",
+    "attribute": "Data",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "Seadramon",
+    "stage": "Adult",
+    "attribute": "Data",
+    "source": "Digimon Color Ver. 1"
+  },
+  {
+    "name": "Seadramon",
+    "stage": "Adult",
+    "attribute": "Data",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "Shellmon",
+    "stage": "Adult",
+    "attribute": "Data",
+    "source": "Digimon Color Ver. 3"
+  },
+  {
+    "name": "ShinMonzaemon",
+    "stage": "Ultimate",
+    "attribute": "Vaccine",
+    "source": "Digimon Color Ver. 1"
+  },
+  {
+    "name": "ShogunGekomon",
+    "stage": "Perfect",
+    "attribute": "Virus",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "SkullGreymon",
+    "stage": "Perfect",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 2"
+  },
+  {
+    "name": "SkullMammothmon",
+    "stage": "Ultimate",
+    "attribute": "Vaccine",
+    "source": "Digimon Color Ver. 2"
+  },
+  {
+    "name": "SkullMammothmon",
+    "stage": "Ultimate",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "SkullMeramon",
+    "stage": "Perfect",
+    "attribute": "Data",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "Soloogarmon",
+    "stage": "Perfect",
+    "attribute": "Virus",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "Starmon",
+    "stage": "Adult",
+    "attribute": "Data",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "Sukamon",
+    "stage": "Adult",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 3"
+  },
+  {
+    "name": "Syakomon",
+    "stage": "Child",
+    "attribute": "Virus",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "SymbareAngoramon",
+    "stage": "Adult",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "Tanemon",
+    "stage": "Baby II",
+    "attribute": "Free",
+    "source": "Digimon Color Ver. 4"
+  },
+  {
+    "name": "Tankmon",
+    "stage": "Adult",
+    "attribute": "Data",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "Tentomon",
+    "stage": "Child",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "TeslaJellymon",
+    "stage": "Adult",
+    "attribute": "Data",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "Thetismon",
+    "stage": "Perfect",
+    "attribute": "Data",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "Thundermon",
+    "stage": "Adult",
+    "attribute": "Data",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "Tlalocmon",
+    "stage": "Super Ultimate",
+    "attribute": "Data",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "Togemon",
+    "stage": "Adult",
+    "attribute": "Data",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Tokomon",
+    "stage": "Baby II",
+    "attribute": "Free",
+    "source": "Digimon Color Ver. 3"
+  },
+  {
+    "name": "Tortomon",
+    "stage": "Adult",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "ToyAgumon",
+    "stage": "Child",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "Triceramon",
+    "stage": "Perfect",
+    "attribute": "Data",
+    "source": "Pendulum Color 1 Nature Spirits"
+  },
+  {
+    "name": "Tsunomon",
+    "stage": "Baby II",
+    "attribute": "Free",
+    "source": "Digimon Color Ver. 2"
+  },
+  {
+    "name": "Tuskmon",
+    "stage": "Adult",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 5"
+  },
+  {
+    "name": "Tyrannomon",
+    "stage": "Adult",
+    "attribute": "Data",
+    "source": "Digimon Color Ver. 1"
+  },
+  {
+    "name": "UlforceVeedramon",
+    "stage": "Ultimate",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Unimon",
+    "stage": "Adult",
+    "attribute": "Vaccine",
+    "source": "Digimon Color Ver. 3"
+  },
+  {
+    "name": "Vademon",
+    "stage": "Perfect",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 2"
+  },
+  {
+    "name": "Veedramon",
+    "stage": "Adult",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Vegiemon",
+    "stage": "Adult",
+    "attribute": "Virus",
+    "source": "Digimon Color Ver. 2"
+  },
+  {
+    "name": "VenomMyotismon",
+    "stage": "Ultimate",
+    "attribute": "Virus",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "Vikemon",
+    "stage": "Ultimate",
+    "attribute": "Free",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "WarGreymon",
+    "stage": "Ultimate",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "WaruMonzaemon",
+    "stage": "Perfect",
+    "attribute": "Virus",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "WereGarurumon",
+    "stage": "Perfect",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "Whamon",
+    "stage": "Adult",
+    "attribute": "Vaccine",
+    "source": "Digimon Color Ver. 2"
+  },
+  {
+    "name": "Whamon",
+    "stage": "Perfect",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "Wizardmon",
+    "stage": "Adult",
+    "attribute": "Data",
+    "source": "Pendulum Color 3 Nightmare Soldiers"
+  },
+  {
+    "name": "Woodmon",
+    "stage": "Adult",
+    "attribute": "Virus",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Yokomon",
+    "stage": "Baby II",
+    "attribute": "Free",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Yuramon",
+    "stage": "Baby I",
+    "attribute": "Free",
+    "source": "Digimon Color Ver. 4"
+  },
+  {
+    "name": "ZeigGreymon",
+    "stage": "Ultimate",
+    "attribute": "Virus",
+    "source": "Pendulum Color 5 Metal Empire"
+  },
+  {
+    "name": "Zephagamon",
+    "stage": "Ultimate",
+    "attribute": "Data",
+    "source": "Pendulum Color 4 Wind Guardians"
+  },
+  {
+    "name": "Zudomon",
+    "stage": "Perfect",
+    "attribute": "Vaccine",
+    "source": "Pendulum Color 2 Deep Savers"
+  },
+  {
+    "name": "Zurumon",
+    "stage": "Baby I",
+    "attribute": "Free",
+    "source": "Digimon Color Ver. 5"
+  }
+]
