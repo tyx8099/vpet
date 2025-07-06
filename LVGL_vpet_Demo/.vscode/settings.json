@@ -1,0 +1,25 @@
+{
+    "files.associations": {
+        "*.h": "c",
+        "*.hpp": "cpp",
+        "*.cpp": "cpp",
+        "*.c": "c",
+        "lvgl.h": "c",
+        "lv_conf.h": "c"
+    },
+    "C_Cpp.default.cppStandard": "c++11",
+    "C_Cpp.default.cStandard": "c17",
+    "C_Cpp.default.compilerPath": "C:/msys64/mingw64/bin/gcc.exe",
+    "C_Cpp.default.intelliSenseMode": "windows-gcc-x64",
+    "python.defaultInterpreterPath": "python",
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "editor.formatOnSave": true,
+    "files.exclude": {
+        "**/*.exe": true,
+        "**/obj/": true,
+        "**/bin/": true
+    },
+    "search.exclude": {
+        "**/sprite_data.h": true
+    }
+}

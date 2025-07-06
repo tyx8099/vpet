@@ -1,0 +1,42 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug LVGL Demo",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/LVGL_vpet_Demo_debug.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "C:/msys64/mingw64/bin/gdb.exe",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "Build Debug",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "Run LVGL Demo",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/LVGL_vpet_Demo.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "C:/msys64/mingw64/bin/gdb.exe",
+            "preLaunchTask": "Build LVGL Demo",
+            "internalConsoleOptions": "openOnSessionStart"
+        }
+    ]
+}

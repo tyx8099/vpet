@@ -1,0 +1,77 @@
+{
+    "configurations": [
+        {
+            "name": "Win32-MSYS2",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}",
+                "${workspaceFolder}/lvgl",
+                "${workspaceFolder}/lvgl/lvgl",
+                "${workspaceFolder}/lvgl/lv_drivers",
+                "C:/msys64/mingw64/include",
+                "C:/msys64/mingw64/include/SDL2"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "LV_CONF_INCLUDE_SIMPLE",
+                "LVGL_SIMULATOR"
+            ],
+            "windowsSdkVersion": "10.0.19041.0",
+            "compilerPath": "C:/msys64/mingw64/bin/gcc.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-gcc-x64",
+            "compilerArgs": [
+                "-Wall",
+                "-Wextra",
+                "-std=c++11"
+            ]
+        },
+        {
+            "name": "Win32-MinGW",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}",
+                "${workspaceFolder}/lvgl",
+                "${workspaceFolder}/lvgl/lvgl", 
+                "${workspaceFolder}/lvgl/lv_drivers"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "LV_CONF_INCLUDE_SIMPLE",
+                "LVGL_SIMULATOR"
+            ],
+            "compilerPath": "gcc.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-gcc-x64"
+        },
+        {
+            "name": "Win32-MSVC",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}",
+                "${workspaceFolder}/lvgl",
+                "${workspaceFolder}/lvgl/lvgl",
+                "${workspaceFolder}/lvgl/lv_drivers"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "LV_CONF_INCLUDE_SIMPLE",
+                "LVGL_SIMULATOR",
+                "_CRT_SECURE_NO_WARNINGS"
+            ],
+            "compilerPath": "cl.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-msvc-x64"
+        }
+    ],
+    "version": 4
+}
